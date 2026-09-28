@@ -1,32 +1,43 @@
 import React from 'react';
 
-const Sidebar = ({ activeTab, setActiveTab }) => {
+const Sidebar = ({ activeTab, setActiveTab, sidebarOpen, setSidebarOpen }) => {
+  const handleNavClick = (tab) => {
+    setActiveTab(tab);
+    if (setSidebarOpen) setSidebarOpen(false);
+  };
+
   return (
-    <aside className="app-sidebar">
-      <div className="sidebar-brand">
+    <aside className={`app-sidebar ${sidebarOpen ? 'show' : ''}`}>
+      <div className="sidebar-brand d-flex justify-content-between align-items-center">
         <div className="d-flex align-items-center gap-2">
           <div className="bg-primary text-white p-1 rounded-2 d-flex align-items-center justify-content-center" style={{ width: '30px', height: '30px' }}>
             <i className="bi bi-broadcast-pin fs-6"></i>
           </div>
           <div className="lh-1">
             <span className="fw-bold fs-6 text-dark">ISP<span className="text-primary">MANAGER</span></span>
-            <span className="d-block text-secondary" style={{ fontSize: '0.65rem' }}>Cloud Operations v5.0</span>
+            <span className="d-block text-secondary" style={{ fontSize: '0.65rem' }}>Operations v5.0</span>
           </div>
         </div>
+        <button 
+          className="btn btn-sm btn-light border-0 d-lg-none text-secondary"
+          onClick={() => setSidebarOpen(false)}
+        >
+          <i className="bi bi-x-lg"></i>
+        </button>
       </div>
 
       <div className="flex-grow-1 overflow-y-auto py-2">
         <div className="sidebar-category">OPERACIONES NOC</div>
         <button 
           className={`sidebar-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
+          onClick={() => handleNavClick('dashboard')}
         >
           <i className="bi bi-grid-fill"></i>
           <span>Panel Principal</span>
         </button>
         <button 
           className={`sidebar-btn ${activeTab === 'clientes' ? 'active' : ''}`}
-          onClick={() => setActiveTab('clientes')}
+          onClick={() => handleNavClick('clientes')}
         >
           <i className="bi bi-people-fill"></i>
           <span>Nómina Abonados</span>
@@ -35,14 +46,14 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
         <div className="sidebar-category">GESTIÓN COMERCIAL</div>
         <button 
           className={`sidebar-btn ${activeTab === 'planes' ? 'active' : ''}`}
-          onClick={() => setActiveTab('planes')}
+          onClick={() => handleNavClick('planes')}
         >
           <i className="bi bi-hdd-stack-fill"></i>
           <span>Planes & Enlaces</span>
         </button>
         <button 
           className={`sidebar-btn ${activeTab === 'soporte' ? 'active' : ''}`}
-          onClick={() => setActiveTab('soporte')}
+          onClick={() => handleNavClick('soporte')}
         >
           <i className="bi bi-headset"></i>
           <span>Mesa de Tickets</span>
