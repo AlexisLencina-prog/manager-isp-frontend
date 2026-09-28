@@ -59,14 +59,29 @@ const ClientesView = () => {
 
   return (
     <div>
+      {/* Alerta flotante fija tipo Toast */}
       {alerta && (
-        <div className={`alert alert-${alerta.tipo} alert-dismissible fade show small py-2`} role="alert">
-          <i className="bi bi-info-circle-fill me-2"></i>
-          {alerta.mensaje}
+        <div 
+          className="position-fixed top-0 end-0 p-3" 
+          style={{ zIndex: 1090, marginTop: '60px' }}
+        >
+          <div 
+            className={`alert alert-${alerta.tipo} alert-dismissible fade show shadow-lg border-0 d-flex align-items-center gap-2 small py-2 px-3`} 
+            role="alert"
+          >
+            <i className={`bi ${alerta.tipo === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'} fs-6`}></i>
+            <div>{alerta.mensaje}</div>
+            <button 
+              type="button" 
+              className="btn-close ms-auto" 
+              onClick={() => setAlerta(null)} 
+              aria-label="Cerrar"
+            ></button>
+          </div>
         </div>
       )}
 
-      {/* Resumen del parque de clientes */}
+      {/* Resumen del parque de abonados */}
       <div className="row g-3 mb-4">
         <div className="col-12 col-md-4">
           <div className="saas-card p-3">
@@ -79,7 +94,7 @@ const ClientesView = () => {
         </div>
       </div>
 
-      {/* Tabla de Clientes */}
+      {/* Tabla de Clientes con búsqueda reactiva */}
       <section className="mb-4">
         <div className="saas-card overflow-hidden">
           <div className="p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2 bg-white">
