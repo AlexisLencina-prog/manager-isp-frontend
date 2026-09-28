@@ -3,6 +3,8 @@ import Sidebar from './Components/Sidebar';
 import Topbar from './Components/Topbar';
 import DashboardView from './Components/DashboardView';
 import ClientesView from './Components/ClientesView';
+import PlanesView from './Components/PlanesView';
+import SoporteView from './Components/SoporteView';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -25,21 +27,9 @@ function App() {
           {activeTab === 'dashboard' && <DashboardView trafico={trafico} />}
           {activeTab === 'clientes' && <ClientesView />}
           
-          {/* Vistas que le dejaremos a Alexis para su módulo (Planes y Soporte) */}
-          {activeTab === 'planes' && (
-            <div className="saas-card p-5 text-center">
-              <i className="bi bi-hdd-stack fs-1 text-primary mb-2 d-block"></i>
-              <h5 className="fw-bold">Módulo Comercial de Planes</h5>
-              <p className="text-secondary small">Sector asignado para la implementación de Alexis.</p>
-            </div>
-          )}
-          {activeTab === 'soporte' && (
-            <div className="saas-card p-5 text-center">
-              <i className="bi bi-headset fs-1 text-primary mb-2 d-block"></i>
-              <h5 className="fw-bold">Módulo de Tickets y Soporte Técnico</h5>
-              <p className="text-secondary small">Sector asignado para la implementación de Alexis.</p>
-            </div>
-          )}
+          
+          {activeTab === 'planes' && <PlanesView />}
+          {activeTab === 'soporte' && <SoporteView />}
         </main>
 
         <footer className="py-3 px-4 border-top bg-white text-secondary small d-flex justify-content-between align-items-center">
