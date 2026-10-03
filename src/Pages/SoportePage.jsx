@@ -107,7 +107,7 @@ export const SoportePage = () => {
                 <small className='d-block text-info'>● Enlace IP (20%)</small>
               </div>
               <svg width='90' height='90' viewBox='0 0 42 42' className='donut'>
-                <circle cx='21' cy='21' r='15.915' fill='transparent' stroke='#e9ecef' strokeWidth='5'></circle>
+                <circle cx='21' cy='21' r='15.915' fill='transparent' stroke='#6cc5ec' strokeWidth='5'></circle>
                 <circle cx='21' cy='21' r='15.915' fill='transparent' stroke='#dc3545' strokeWidth='5' strokeDasharray='50 50' strokeDashoffset='25'></circle>
                 <circle cx='21' cy='21' r='15.915' fill='transparent' stroke='#ffc107' strokeWidth='5' strokeDasharray='30 70' strokeDashoffset='75'></circle>
               </svg>

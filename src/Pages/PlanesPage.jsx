@@ -1,102 +1,193 @@
 import React, { useState } from 'react';
 
-const PLANES_ISP = [
+const PLANES = [
   {
-    id: 'PLAN-50',
-    nombre: 'Básico Simétrico',
-    bajada: '50 Mbps',
-    subida: '50 Mbps',
-    burst: '75 Mbps',
+    id: 'PLAN-BASICO',
+    nombre: 'PLAN BÁSICO',
+    velocidad: '50M',
+    unidad: 'MBPS',
+    precioMensual: 8000,
+    destacado: false,
+    colorGrafico: '#0dcaf0', // Color celeste / info
+    porcentajeGrafico: 35,   // Porcentaje visual del anillo
+    caracteristicas: [
+      '50 Mbps de velocidad',
+      'Ideal para 1-2 dispositivos',
+      'Soporte técnico estándar'
+    ]
+  },
+  {
+    id: 'PLAN-HOGAR',
+    nombre: 'PLAN HOGAR',
+    velocidad: '150M',
+    unidad: 'MBPS',
     precioMensual: 12000,
-    abonados: 142
+    destacado: false,
+    colorGrafico: '#0d6efd', // Color azul principal
+    porcentajeGrafico: 65,   // Porcentaje visual del anillo
+    caracteristicas: [
+      '150 Mbps de velocidad',
+      'Ideal para 3-5 dispositivos',
+      'Soporte técnico prioritario'
+    ]
   },
   {
-    id: 'PLAN-150',
-    nombre: 'Hogar Avanzado',
-    bajada: '150 Mbps',
-    subida: '150 Mbps',
-    burst: '200 Mbps',
+    id: 'PLAN-PREMIUM',
+    nombre: 'PLAN PREMIUM',
+    velocidad: '300M',
+    unidad: 'MBPS',
     precioMensual: 18000,
-    abonados: 310
-  },
-  {
-    id: 'PLAN-300',
-    nombre: 'Pro Fibra NOC',
-    bajada: '300 Mbps',
-    subida: '300 Mbps',
-    burst: '400 Mbps',
-    precioMensual: 26000,
-    abonados: 98
+    destacado: true,
+    badgeText: 'RECOMENDADO',
+    colorGrafico: '#6f42c1', // Color violeta / premium
+    porcentajeGrafico: 100,  // Círculo completo
+    caracteristicas: [
+      '300 Mbps de velocidad',
+      'Ideal para hogares con alto consumo',
+      'Soporte técnico 24/7'
+    ]
   }
 ];
 
 export const PlanesPage = () => {
   const [esAnual, setEsAnual] = useState(false);
+  const [planSeleccionado, setPlanSeleccionado] = useState('PLAN-BASICO');
 
   return (
     <>
-      <div className='row mb-4 align-items-center'>
-        <div className='col-12 col-md-8'>
-          <h2 className='fw-bold text-primary mb-1'>Gestión de Perfiles y Tarifas ISP</h2>
-          <p className='text-muted mb-0'>
-            Monitoreo de ancho de banda, burst/ráfaga y saturación por abonados.
+      {/* Encabezado y Toggle Mensual/Anual */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h2 className="fw-bold text-dark mb-1">Catálogo Comercial de Planes</h2>
+          <p className="text-secondary small mb-0">
+            Conectividad por fibra óptica para abonados residenciales
           </p>
         </div>
-        <div className='col-12 col-md-4 text-md-end mt-3 mt-md-0'>
-          <div className='form-check form-switch d-inline-block text-start'>
+        <div className="d-flex align-items-center gap-2">
+          <span className={`small fw-semibold ${!esAnual ? 'text-dark' : 'text-secondary'}`}>
+            Mensual
+          </span>
+          <div className="form-check form-switch mb-0 fs-5">
             <input
-              className='form-check-input'
-              type='checkbox'
-              role='switch'
-              id='switchAnual'
+              className="form-check-input style-pointer"
+              type="checkbox"
+              role="switch"
               checked={esAnual}
               onChange={() => setEsAnual(!esAnual)}
             />
-            <label className='form-check-label fw-semibold ms-2' htmlFor='switchAnual'>
-              Pago Anual <span className='badge bg-success'>15% OFF</span>
-            </label>
           </div>
+          <span className={`small fw-semibold ${esAnual ? 'text-dark' : 'text-secondary'}`}>
+            Anual
+          </span>
+          <span className="badge bg-success small ms-1">-15%</span>
         </div>
       </div>
 
-      <div className='row g-4'>
-        {PLANES_ISP.map((plan) => {
-          const precioFinal = esAnual
-            ? Math.round(plan.precioMensual * 12 * 0.85)
+      {/* Tarjetas de Planes */}
+      <div className="row g-4">
+        {PLANES.map((plan) => {
+          const isSelected = planSeleccionado === plan.id;
+
+          const precioMensualConDescuento = esAnual
+            ? Math.round(plan.precioMensual * 0.85)
             : plan.precioMensual;
 
+          const precioTotalAnual = precioMensualConDescuento * 12;
+
+          // Cálculo del borde pintado para el SVG circular
+          const dashArray = `${plan.porcentajeGrafico} ${100 - plan.porcentajeGrafico}`;
+
           return (
-            <div className='col-12 col-md-4' key={plan.id}>
-              <div className='card h-100 shadow-sm border-0'>
-                <div className='card-header bg-primary text-white py-3'>
-                  <span className='badge bg-light text-primary me-2'>{plan.id}</span>
-                  <h5 className='card-title d-inline mb-0'>{plan.nombre}</h5>
+            <div className="col-12 col-md-4" key={plan.id}>
+              <div
+                className={`card h-100 shadow-sm rounded-3 overflow-hidden ${
+                  isSelected ? 'border-2 border-primary' : 'border-0'
+                }`}
+              >
+                {/* Encabezado azul oscuro */}
+                <div
+                  className="d-flex justify-content-between align-items-center py-3 px-4"
+                  style={{ backgroundColor: '#005691', color: '#ffffff' }}
+                >
+                  <span className="fw-bold small tracking-wider">{plan.nombre}</span>
+                  {plan.destacado && (
+                    <span className="badge bg-warning text-dark fw-bold px-2 py-1">
+                      {plan.badgeText}
+                    </span>
+                  )}
                 </div>
-                <div className='card-body d-flex flex-column'>
-                  <div className='mb-3'>
-                    <h3 className='fw-bold text-dark d-inline'>
-                      ${precioFinal.toLocaleString('es-AR')}
-                    </h3>
-                    <small className='text-muted'> / {esAnual ? 'año' : 'mes'}</small>
+
+                <div className="card-body d-flex flex-column align-items-center text-center p-4">
+                  {/* Gráfico SVG en dona pintado con el color de cada plan */}
+                  <div className="my-3 position-relative d-flex align-items-center justify-content-center">
+                    <svg width="140" height="140" viewBox="0 0 42 42">
+                      {/* Fondo gris del anillo */}
+                      <circle
+                        cx="21"
+                        cy="21"
+                        r="15.915"
+                        fill="transparent"
+                        stroke="#e9ecef"
+                        strokeWidth="4"
+                      />
+                      {/* Anillo pintado con color y porcentaje correspondiente */}
+                      <circle
+                        cx="21"
+                        cy="21"
+                        r="15.915"
+                        fill="transparent"
+                        stroke={plan.colorGrafico}
+                        strokeWidth="4"
+                        strokeDasharray={dashArray}
+                        strokeDashoffset="25"
+                      />
+                    </svg>
+
+                    {/* Texto dentro del gráfico circular */}
+                    <div className="position-absolute d-flex flex-column align-items-center">
+                      <span className="h3 fw-bold text-dark mb-0">{plan.velocidad}</span>
+                      <small className="text-muted fw-semibold" style={{ fontSize: '0.75rem' }}>
+                        {plan.unidad}
+                      </small>
+                    </div>
                   </div>
-                  <ul className='list-group list-group-flush mb-4'>
-                    <li className='list-group-item px-0'>
-                      <strong>Velocidad:</strong> {plan.bajada} (Simétrica)
-                    </li>
-                    <li className='list-group-item px-0'>
-                      <strong>Ráfaga (Burst):</strong> {plan.burst}
-                    </li>
-                    <li className='list-group-item px-0'>
-                      <strong>Abonados activos:</strong>{' '}
-                      <span className='badge bg-info text-dark'>{plan.abonados} colgados</span>
-                    </li>
+
+                  {/* Precios y desglose anual */}
+                  <div className="my-2">
+                    <div>
+                      <span className="display-6 fw-bold text-dark">
+                        ${precioMensualConDescuento.toLocaleString('es-AR')}
+                      </span>
+                      <span className="text-muted fs-6">/mes</span>
+                    </div>
+
+                    {esAnual && (
+                      <div className="text-success small fw-semibold mt-1">
+                        Facturación anual: ${precioTotalAnual.toLocaleString('es-AR')}/año
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Lista de características */}
+                  <ul className="list-unstyled w-100 text-start my-3 pt-3 border-top">
+                    {plan.caracteristicas.map((item, idx) => (
+                      <li key={idx} className="mb-2 text-secondary small d-flex align-items-center">
+                        <i className="bi bi-check2 text-success me-2 fw-bold fs-6"></i>
+                        <span>{item}</span>
+                      </li>
+                    ))}
                   </ul>
-                  <div className='mt-auto d-grid gap-2'>
-                    <button type='button' className='btn btn-outline-primary btn-sm'>
-                      Auditar Perfil
-                    </button>
-                    <button type='button' className='btn btn-secondary btn-sm'>
-                      Ver Abonados
+
+                  {/* Botón de Selección */}
+                  <div className="mt-auto w-100 pt-3">
+                    <button
+                      type="button"
+                      onClick={() => setPlanSeleccionado(plan.id)}
+                      className={`btn w-100 py-2 small fw-semibold rounded-pill ${
+                        isSelected ? 'btn-primary' : 'btn-outline-primary'
+                      }`}
+                    >
+                      {isSelected ? 'Plan seleccionado' : 'Elegir Plan'}
                     </button>
                   </div>
                 </div>
