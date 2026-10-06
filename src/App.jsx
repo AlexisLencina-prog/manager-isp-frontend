@@ -5,7 +5,7 @@ import AppRouter from './Components/AppRouter';
 
 function App() {
   const [trafico, setTrafico] = useState(3.8);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleActualizarTrafico = () => {
     const nuevoTrafico = (Math.random() * (4.8 - 2.5) + 2.5).toFixed(1);
@@ -14,23 +14,16 @@ function App() {
 
   return (
     <div className='d-flex position-relative'>
-      {/* Fondo semitransparente para cerrar el menú drawer en celulares */}
-      {sidebarOpen && (
-        <div 
-          className='sidebar-backdrop d-lg-none' 
-          onClick={() => setSidebarOpen(false)}
-        ></div>
-      )}
-
       <Sidebar 
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
       
-      <div className='app-wrapper'>
+      <div className={`app-wrapper ${!sidebarOpen ? 'full-width' : ''}`}>
         <Topbar 
           onActualizarTrafico={handleActualizarTrafico} 
           setSidebarOpen={setSidebarOpen}
+          sidebarOpen={sidebarOpen}
         />
 
         <main className='p-3 p-lg-4 flex-grow-1'>
