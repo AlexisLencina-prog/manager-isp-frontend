@@ -10,6 +10,7 @@ const CLIENTES_INICIALES = [
 const ClientesPage = () => {
   const [clientes, setClientes] = useState(CLIENTES_INICIALES);
   const [busqueda, setBusqueda] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('Todos');
   const [alerta, setAlerta] = useState(null);
 
   // Estados del Formulario
@@ -73,11 +74,16 @@ const ClientesPage = () => {
     setAlerta({ tipo: 'warning', mensaje: `Abonado ${clienteSeleccionado.nombre} pasó a estado: ${nuevoEstado}.` });
   };
 
-  const clientesFiltrados = clientes.filter((c) => 
-    c.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    c.dni.includes(busqueda) ||
-    c.ip.includes(busqueda)
-  );
+  const totalHabilitados = clientes.filter((c) => c.estado === 'Habilitado').length;
+  const totalSuspendidos = clientes.filter((c) => c.estado === 'Suspendido').length;
+
+  const clientesFiltrados = clientes.filter((c) => {
+    const coincideTexto = c.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+                          c.dni.includes(busqueda) ||
+                          c.ip.includes(busqueda);
+    const coincideEstado = filtroEstado === 'Todos' || c.estado === filtroEstado;
+    return coincideTexto && coincideEstado;
+  });
 
   return (
     <>
@@ -92,43 +98,97 @@ const ClientesPage = () => {
         </div>
       )}
 
-      {/* Resumen Superior */}
-      <section className='row g-3 mb-4' aria-label='Resumen de base de clientes'>
+      {/* Métricas Superiores Equilibradas (Fila de 3 tarjetas) */}
+      <section className='row g-3 mb-4' aria-label='Resumen de abonados'>
         <div className='col-12 col-md-4'>
-          <div className='card border rounded-3 shadow-sm p-3 bg-white'>
-            <span className='text-secondary small fw-semibold'>Parque Total de Clientes</span>
-            <div className='d-flex align-items-baseline gap-2 mt-1'>
+          <div className='card border rounded-3 shadow-sm p-3 bg-white h-100'>
+            <div className='d-flex justify-content-between align-items-center'>
+              <span className='text-secondary small fw-semibold'>Parque Total de Clientes</span>
+              <div className='bg-primary-subtle text-primary rounded-2 p-2 d-flex align-items-center justify-content-center' style={{ width: '32px', height: '32px' }}>
+                <i className='bi bi-people-fill fs-6'></i>
+              </div>
+            </div>
+            <div className='d-flex align-items-baseline gap-2 mt-2'>
               <h2 className='h3 fw-bold mb-0 text-dark'>{clientes.length}</h2>
-              <span className='badge text-bg-success-subtle text-success small'>
-                {clientes.filter((c) => c.estado === 'Habilitado').length} Habilitados
-              </span>
+              <span className='badge bg-light text-secondary border small'>Registrados</span>
+            </div>
+          </div>
+        </div>
+
+        <div className='col-12 col-md-4'>
+          <div className='card border rounded-3 shadow-sm p-3 bg-white h-100'>
+            <div className='d-flex justify-content-between align-items-center'>
+              <span className='text-secondary small fw-semibold'>Enlaces Habilitados</span>
+              <div className='bg-success-subtle text-success rounded-2 p-2 d-flex align-items-center justify-content-center' style={{ width: '32px', height: '32px' }}>
+                <i className='bi bi-check-circle-fill fs-6'></i>
+              </div>
+            </div>
+            <div className='d-flex align-items-baseline gap-2 mt-2'>
+              <h2 className='h3 fw-bold mb-0 text-dark'>{totalHabilitados}</h2>
+              <span className='badge bg-success-subtle text-success border border-success-subtle small'>Online</span>
+            </div>
+          </div>
+        </div>
+
+        <div className='col-12 col-md-4'>
+          <div className='card border rounded-3 shadow-sm p-3 bg-white h-100'>
+            <div className='d-flex justify-content-between align-items-center'>
+              <span className='text-secondary small fw-semibold'>Enlaces Suspendidos</span>
+              <div className='bg-danger-subtle text-danger rounded-2 p-2 d-flex align-items-center justify-content-center' style={{ width: '32px', height: '32px' }}>
+                <i className='bi bi-slash-circle-fill fs-6'></i>
+              </div>
+            </div>
+            <div className='d-flex align-items-baseline gap-2 mt-2'>
+              <h2 className='h3 fw-bold mb-0 text-dark'>{totalSuspendidos}</h2>
+              <span className='badge bg-danger-subtle text-danger border border-danger-subtle small'>Corte administrativo</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Tabla de Clientes con .map() y key única */}
+      {/* Nómina de Abonados */}
       <section className='mb-4' aria-label='Listado de abonados'>
         <div className='card border rounded-3 shadow-sm overflow-hidden bg-white'>
-          <div className='p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2'>
-            <div className='d-flex align-items-center gap-2'>
+          <div className='p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-3'>
+            <div>
               <h1 className='h6 mb-0 fw-bold text-dark'>Nómina General de Abonados</h1>
-              <span className='badge bg-secondary-subtle text-secondary-emphasis small'>{clientesFiltrados.length} en pantalla</span>
+              <small className='text-secondary'>Gestión de aprovisionamiento y asignación de IP</small>
             </div>
-            <div style={{ width: '260px' }}>
-              <input
-                type='search'
-                className='form-control form-control-sm'
-                placeholder='Buscar por nombre, DNI o IP...'
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-              />
+
+            <div className='d-flex flex-wrap align-items-center gap-2'>
+              {/* Selector de filtro por estado */}
+              <div className='btn-group btn-group-sm' role='group' aria-label='Filtrar por estado'>
+                {['Todos', 'Habilitado', 'Suspendido'].map((est) => (
+                  <button
+                    key={est}
+                    type='button'
+                    className={`btn ${filtroEstado === est ? 'btn-primary' : 'btn-outline-secondary'}`}
+                    onClick={() => setFiltroEstado(est)}
+                  >
+                    {est}
+                  </button>
+                ))}
+              </div>
+
+              {/* Buscador con icono integrado */}
+              <div className='input-group input-group-sm' style={{ width: '240px' }}>
+                <span className='input-group-text bg-light border-end-0 text-secondary'>
+                  <i className='bi bi-search'></i>
+                </span>
+                <input
+                  type='search'
+                  className='form-control bg-light border-start-0'
+                  placeholder='Buscar nombre, DNI o IP...'
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
           <div className='table-responsive'>
-            <table className='table table-hover align-middle mb-0'>
-              <thead className='table-light small text-secondary'>
+            <table className='table table-hover align-middle mb-0 small'>
+              <thead className='table-light text-secondary'>
                 <tr>
                   <th scope='col' className='ps-3'>N° CLIENTE</th>
                   <th scope='col'>TITULAR</th>
@@ -139,23 +199,42 @@ const ClientesPage = () => {
                   <th scope='col' className='pe-3 text-end'>ACCIÓN</th>
                 </tr>
               </thead>
-              <tbody className='small'>
+              <tbody>
                 {clientesFiltrados.map((c) => (
                   <tr key={c.id}>
-                    <td className='ps-3 fw-semibold text-secondary'>{c.id}</td>
-                    <td className='fw-medium text-dark'>{c.nombre}</td>
-                    <td>{c.dni}</td>
-                    <td><span className='badge text-bg-light border'>{c.plan}</span></td>
-                    <td><code>{c.ip}</code></td>
+                    <td className='ps-3 fw-bold text-secondary'>{c.id}</td>
                     <td>
-                      <span className={`badge ${c.estado === 'Habilitado' ? 'text-bg-success-subtle text-success border border-success-subtle' : 'text-bg-danger-subtle text-danger border border-danger-subtle'} px-2 py-1`}>
+                      <div className='d-flex align-items-center gap-2'>
+                        <div 
+                          className='bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold' 
+                          style={{ width: '28px', height: '28px', fontSize: '0.72rem' }}
+                        >
+                          {c.nombre.charAt(0)}
+                        </div>
+                        <span className='fw-semibold text-dark'>{c.nombre}</span>
+                      </div>
+                    </td>
+                    <td className='text-secondary'>{c.dni}</td>
+                    <td>
+                      <span className='badge bg-light text-secondary border fw-normal'>
+                        <i className='bi bi-hdd-network me-1 text-primary'></i>
+                        {c.plan}
+                      </span>
+                    </td>
+                    <td>
+                      <span className='badge bg-light text-dark border font-monospace'>
+                        {c.ip}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`badge ${c.estado === 'Habilitado' ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'} px-2 py-1`}>
                         {c.estado}
                       </span>
                     </td>
                     <td className='pe-3 text-end'>
                       <button
                         type='button'
-                        className='btn btn-sm btn-outline-primary py-0 px-2'
+                        className='btn btn-sm btn-outline-primary py-1 px-2'
                         style={{ fontSize: '0.75rem' }}
                         onClick={() => handleAbrirModal(c)}
                       >
@@ -175,7 +254,7 @@ const ClientesPage = () => {
         <div className='card border rounded-3 shadow-sm p-4 bg-white'>
           <div className='border-bottom pb-2 mb-3'>
             <h2 className='h6 fw-bold mb-1 text-dark'>Alta de Nuevo Abonado</h2>
-            <p className='text-secondary small mb-0'>Aprovisionamiento reactivo de enlace en memoria</p>
+            <p className='text-secondary small mb-0'>Aprovisionamiento de enlace en memoria</p>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -260,11 +339,11 @@ const ClientesPage = () => {
               </li>
               <li className='d-flex justify-content-between py-2 border-bottom'>
                 <span className='text-secondary'>Plan Contratado:</span>
-                <span className='badge text-bg-light border'>{clienteSeleccionado.plan}</span>
+                <span className='badge bg-light text-secondary border'>{clienteSeleccionado.plan}</span>
               </li>
               <li className='d-flex justify-content-between py-2 border-bottom'>
                 <span className='text-secondary'>IP Asignada:</span>
-                <code>{clienteSeleccionado.ip}</code>
+                <span className='badge bg-light text-dark border font-monospace'>{clienteSeleccionado.ip}</span>
               </li>
               <li className='d-flex justify-content-between py-2 border-bottom'>
                 <span className='text-secondary'>Fecha de Alta:</span>
@@ -272,7 +351,7 @@ const ClientesPage = () => {
               </li>
               <li className='d-flex justify-content-between py-2'>
                 <span className='text-secondary'>Estado del Servicio:</span>
-                <span className={`badge ${clienteSeleccionado.estado === 'Habilitado' ? 'text-bg-success' : 'text-bg-danger'}`}>
+                <span className={`badge ${clienteSeleccionado.estado === 'Habilitado' ? 'bg-success-subtle text-success border border-success-subtle' : 'bg-danger-subtle text-danger border border-danger-subtle'}`}>
                   {clienteSeleccionado.estado}
                 </span>
               </li>

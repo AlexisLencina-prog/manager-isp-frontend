@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const PLANES = [
   {
@@ -8,8 +8,8 @@ const PLANES = [
     unidad: 'MBPS',
     precioMensual: 8000,
     destacado: false,
-    colorGrafico: '#0dcaf0', // Color celeste / info
-    porcentajeGrafico: 35,   // Porcentaje visual del anillo
+    colorGrafico: '#0dcaf0',
+    porcentajeGrafico: 35,
     caracteristicas: [
       '50 Mbps de velocidad',
       'Ideal para 1-2 dispositivos',
@@ -23,8 +23,8 @@ const PLANES = [
     unidad: 'MBPS',
     precioMensual: 12000,
     destacado: false,
-    colorGrafico: '#0d6efd', // Color azul principal
-    porcentajeGrafico: 65,   // Porcentaje visual del anillo
+    colorGrafico: '#0d6efd',
+    porcentajeGrafico: 65,
     caracteristicas: [
       '150 Mbps de velocidad',
       'Ideal para 3-5 dispositivos',
@@ -39,8 +39,8 @@ const PLANES = [
     precioMensual: 18000,
     destacado: true,
     badgeText: 'RECOMENDADO',
-    colorGrafico: '#6f42c1', // Color violeta / premium
-    porcentajeGrafico: 100,  // Círculo completo
+    colorGrafico: '#6f42c1',
+    porcentajeGrafico: 100,
     caracteristicas: [
       '300 Mbps de velocidad',
       'Ideal para hogares con alto consumo',
@@ -50,11 +50,48 @@ const PLANES = [
 ];
 
 export const PlanesPage = () => {
-  const [esAnual, setEsAnual] = useState(false);
+  // --- USESTATE ---
+  const [esAnual, setEsAnual] = useState(() => {
+    // Recupera la preferencia guardada en el navegador si existe
+    const guardado = localStorage.getItem('facturacion_anual');
+    return guardado ? JSON.parse(guardado) : false;
+  });
+
   const [planSeleccionado, setPlanSeleccionado] = useState('PLAN-BASICO');
+  const [mensajeNotificacion, setMensajeNotificacion] = useState('');
+
+  // --- USEEFFECT 1: Sincronización con localStorage al cambiar esAnual ---
+  useEffect(() => {
+    localStorage.setItem('facturacion_anual', JSON.stringify(esAnual));
+  }, [esAnual]); // Se ejecuta únicamente cuando la dependencia 'esAnual' cambia
+
+  // --- USEEFFECT 2: Alerta/Efecto al cambiar de plan o modalidad ---
+  useEffect(() => {
+    const planObj = PLANES.find((p) => p.id === planSeleccionado);
+    if (planObj) {
+      setMensajeNotificacion(
+        `Has seleccionado ${planObj.nombre} con facturación ${esAnual ? 'Anual (-15%)' : 'Mensual'}.`
+      );
+
+      // Ocultar la notificación automáticamente a los 4 segundos (Cleanup de timer)
+      const timer = setTimeout(() => {
+        setMensajeNotificacion('');
+      }, 4000);
+
+      return () => clearTimeout(timer); // Cleanup function para evitar fugas
+    }
+  }, [planSeleccionado, esAnual]); // Dependencias: cambia si el usuario elige otro plan o cambia la facturación
 
   return (
     <>
+      {/* Alerta dinámica generada por useEffect */}
+      {mensajeNotificacion && (
+        <div className="alert alert-info border-0 shadow-sm d-flex align-items-center mb-4 rounded-3 fade show">
+          <i className="bi bi-info-circle-fill fs-5 me-2 text-info"></i>
+          <div>{mensajeNotificacion}</div>
+        </div>
+      )}
+
       {/* Encabezado y Toggle Mensual/Anual */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
@@ -87,14 +124,11 @@ export const PlanesPage = () => {
       <div className="row g-4">
         {PLANES.map((plan) => {
           const isSelected = planSeleccionado === plan.id;
-
           const precioMensualConDescuento = esAnual
             ? Math.round(plan.precioMensual * 0.85)
             : plan.precioMensual;
 
           const precioTotalAnual = precioMensualConDescuento * 12;
-
-          // Cálculo del borde pintado para el SVG circular
           const dashArray = `${plan.porcentajeGrafico} ${100 - plan.porcentajeGrafico}`;
 
           return (
@@ -104,7 +138,6 @@ export const PlanesPage = () => {
                   isSelected ? 'border-2 border-primary' : 'border-0'
                 }`}
               >
-                {/* Encabezado azul oscuro */}
                 <div
                   className="d-flex justify-content-between align-items-center py-3 px-4"
                   style={{ backgroundColor: '#005691', color: '#ffffff' }}
@@ -118,10 +151,8 @@ export const PlanesPage = () => {
                 </div>
 
                 <div className="card-body d-flex flex-column align-items-center text-center p-4">
-                  {/* Gráfico SVG en dona pintado con el color de cada plan */}
                   <div className="my-3 position-relative d-flex align-items-center justify-content-center">
                     <svg width="140" height="140" viewBox="0 0 42 42">
-                      {/* Fondo gris del anillo */}
                       <circle
                         cx="21"
                         cy="21"
@@ -130,7 +161,6 @@ export const PlanesPage = () => {
                         stroke="#e9ecef"
                         strokeWidth="4"
                       />
-                      {/* Anillo pintado con color y porcentaje correspondiente */}
                       <circle
                         cx="21"
                         cy="21"
@@ -143,7 +173,6 @@ export const PlanesPage = () => {
                       />
                     </svg>
 
-                    {/* Texto dentro del gráfico circular */}
                     <div className="position-absolute d-flex flex-column align-items-center">
                       <span className="h3 fw-bold text-dark mb-0">{plan.velocidad}</span>
                       <small className="text-muted fw-semibold" style={{ fontSize: '0.75rem' }}>
@@ -152,7 +181,6 @@ export const PlanesPage = () => {
                     </div>
                   </div>
 
-                  {/* Precios y desglose anual */}
                   <div className="my-2">
                     <div>
                       <span className="display-6 fw-bold text-dark">
@@ -168,7 +196,6 @@ export const PlanesPage = () => {
                     )}
                   </div>
 
-                  {/* Lista de características */}
                   <ul className="list-unstyled w-100 text-start my-3 pt-3 border-top">
                     {plan.caracteristicas.map((item, idx) => (
                       <li key={idx} className="mb-2 text-secondary small d-flex align-items-center">
@@ -178,7 +205,6 @@ export const PlanesPage = () => {
                     ))}
                   </ul>
 
-                  {/* Botón de Selección */}
                   <div className="mt-auto w-100 pt-3">
                     <button
                       type="button"
