@@ -1,18 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
-const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
-  const [tema, setTema] = useState(() => {
-    return localStorage.getItem("tema_app") || "light";
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-bs-theme", tema);
-    localStorage.setItem("tema_app", tema);
-  }, [tema]);
-
+const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen, tema, setTema }) => {
   const toggleTema = () => {
-    setTema((prevTema) => (prevTema === "light" ? "dark" : "light"));
+    setTema((prev) => (prev === "light" ? "dark" : "light"));
   };
 
   return (
@@ -23,11 +14,9 @@ const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
       <div className="d-flex align-items-center gap-2">
         <button
           type="button"
-          className="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center p-2"
+          className="btn btn-sm btn-outline-secondary d-lg-none d-flex align-items-center justify-content-center p-2"
           onClick={() => setSidebarOpen((prev) => !prev)}
-          title={
-            sidebarOpen ? "Ocultar barra lateral" : "Mostrar barra lateral"
-          }
+          title="Alternar menú"
           aria-label="Alternar menú"
         >
           <i className="bi bi-list fs-5"></i>
@@ -35,14 +24,14 @@ const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
 
         <div
           className="input-group input-group-sm d-none d-md-flex"
-          style={{ width: "260px" }}
+          style={{ width: "240px" }}
         >
           <span className="input-group-text bg-body-secondary border-end-0 text-secondary">
             <i className="bi bi-search"></i>
           </span>
           <input
             type="search"
-            className="form-control bg-body-secondary border-start-0"
+            className="form-control bg-body-secondary border-start-0 text-body"
             placeholder="Buscar IP o abonado..."
           />
         </div>
@@ -51,7 +40,7 @@ const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
       <div className="d-flex align-items-center gap-2 gap-sm-3">
         <button
           type="button"
-          className={`btn btn-sm ${tema === "dark" ? "btn-outline-warning" : "btn-outline-dark"} d-flex align-items-center gap-1`}
+          className={`btn btn-sm ${tema === "dark" ? "btn-outline-warning" : "btn-outline-secondary"} d-flex align-items-center gap-1`}
           onClick={toggleTema}
           title="Cambiar Modo Claro/Oscuro"
         >
@@ -63,8 +52,11 @@ const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
           </span>
         </button>
 
-        <span className="badge bg-body-secondary border text-secondary fw-normal px-2 py-1 small d-none d-sm-inline-flex align-items-center gap-1">
-          <span className="badge bg-success p-1 rounded-circle"></span>{" "}
+        <span className="badge bg-body-secondary border text-secondary fw-normal px-2 py-1 small d-none d-sm-inline-flex align-items-center gap-2">
+          <span
+            className="rounded-circle bg-success"
+            style={{ width: "7px", height: "7px" }}
+          ></span>{" "}
           Telemetría
         </span>
 
@@ -87,13 +79,13 @@ const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
         <div className="border-start ps-2 ps-sm-3 d-flex align-items-center gap-2">
           <div
             className="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold"
-            style={{ width: "34px", height: "34px", fontSize: "0.85rem" }}
+            style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
           >
             <i className="bi bi-person-circle fs-5"></i>
           </div>
           <div className="d-none d-sm-block lh-1 text-start">
             <span className="fw-bold text-body small d-block">Grupo 16</span>
-            <span className="text-secondary" style={{ fontSize: "0.7rem" }}>
+            <span className="text-secondary" style={{ fontSize: "0.68rem" }}>
               Guardia NOC
             </span>
           </div>

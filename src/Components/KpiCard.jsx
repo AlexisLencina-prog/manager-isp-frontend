@@ -7,8 +7,7 @@ const KpiCard = ({
   badgeClase,
   icono,
   colorIcono,
-  pathD,
-  strokeColor,
+  subtitulo = "Operación normal",
 }) => {
   return (
     <div className="col-12 col-sm-6 col-xl-3">
@@ -27,23 +26,14 @@ const KpiCard = ({
 
         <div className="d-flex justify-content-between align-items-baseline my-1">
           <h2 className="h4 fw-bold mb-0 text-body">{valor}</h2>
-          <div style={{ width: "60px", height: "24px" }}>
-            <svg viewBox="0 0 60 24" width="100%" height="100%">
-              <path
-                d={pathD}
-                fill="none"
-                stroke={strokeColor}
-                strokeWidth="2.5"
-                strokeLinecap="round"
-              />
-            </svg>
-          </div>
-        </div>
-
-        <div className="mt-2">
           <span className={`badge ${badgeClase} small px-2 py-1`}>
             {badgeTexto}
           </span>
+        </div>
+
+        <div className="text-body-secondary mt-2" style={{ fontSize: "0.72rem" }}>
+          <i className="bi bi-check2-circle text-success me-1"></i>
+          {subtitulo}
         </div>
       </div>
     </div>

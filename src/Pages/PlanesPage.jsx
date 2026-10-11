@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
 const PLANES = [
   {
@@ -56,36 +57,24 @@ export const PlanesPage = () => {
   });
 
   const [planSeleccionado, setPlanSeleccionado] = useState("PLAN-BASICO");
-  const [mensajeNotificacion, setMensajeNotificacion] = useState("");
 
   useEffect(() => {
     localStorage.setItem("facturacion_anual", JSON.stringify(esAnual));
   }, [esAnual]);
 
-  useEffect(() => {
-    const planObj = PLANES.find((p) => p.id === planSeleccionado);
-    if (planObj) {
-      setMensajeNotificacion(
-        `Has seleccionado ${planObj.nombre} con facturación ${esAnual ? "Anual (-15%)" : "Mensual"}.`,
-      );
-
-      const timer = setTimeout(() => {
-        setMensajeNotificacion("");
-      }, 4000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [planSeleccionado, esAnual]);
+  const handleSeleccionarPlan = (plan) => {
+    setPlanSeleccionado(plan.id);
+    Swal.fire({
+      title: "Perfil Comercial Actualizado",
+      text: `Se configuró el ${plan.nombre} (${plan.velocidad} ${plan.unidad}) con facturación ${esAnual ? "Anual (-15%)" : "Mensual"}.`,
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  };
 
   return (
     <>
-      {mensajeNotificacion && (
-        <div className="alert alert-info border-0 shadow-sm d-flex align-items-center mb-4 rounded-3 fade show">
-          <i className="bi bi-info-circle-fill fs-5 me-2 text-info"></i>
-          <div>{mensajeNotificacion}</div>
-        </div>
-      )}
-
       <div className="d-flex justify-content-between align-items-center mb-4">
         <div>
           <h2 className="fw-bold text-body mb-1">
@@ -122,11 +111,9 @@ export const PlanesPage = () => {
       <div className="row g-4">
         {PLANES.map((plan) => {
           const isSelected = planSeleccionado === plan.id;
-
           const precioMensualConDescuento = esAnual
             ? Math.round(plan.precioMensual * 0.85)
             : plan.precioMensual;
-
           const precioTotalAnual = precioMensualConDescuento * 12;
           const dashArray = `${plan.porcentajeGrafico} ${100 - plan.porcentajeGrafico}`;
 
@@ -218,7 +205,7 @@ export const PlanesPage = () => {
                   <div className="mt-auto w-100 pt-3">
                     <button
                       type="button"
-                      onClick={() => setPlanSeleccionado(plan.id)}
+                      onClick={() => handleSeleccionarPlan(plan)}
                       className={`btn w-100 py-2 small fw-semibold rounded-pill ${
                         isSelected ? "btn-primary" : "btn-outline-primary"
                       }`}

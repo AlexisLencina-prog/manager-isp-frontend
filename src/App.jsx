@@ -5,7 +5,9 @@ import AppRouter from "./Components/AppRouter";
 
 function App() {
   const [trafico, setTrafico] = useState(3.8);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(
+    () => window.innerWidth >= 992
+  );
 
   const [tema, setTema] = useState(() => {
     return localStorage.getItem("tema_app") || "light";
@@ -23,6 +25,13 @@ function App() {
 
   return (
     <div className="d-flex position-relative bg-body text-body min-vh-100">
+      {sidebarOpen && (
+        <div
+          className="sidebar-backdrop d-lg-none"
+          onClick={() => setSidebarOpen(false)}
+        ></div>
+      )}
+
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <div

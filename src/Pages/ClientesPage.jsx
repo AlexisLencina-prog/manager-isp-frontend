@@ -1,63 +1,90 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
 import { Modal, Button } from "react-bootstrap";
 
-const CLIENTES_INICIALES = [
-  {
-    id: "#1001",
-    nombre: "Juan Manuel Gómez",
-    dni: "32456789",
-    plan: "Fibra Óptica 100 Mbps",
-    ip: "192.168.10.45",
-    estado: "Habilitado",
-    fechaAlta: "12/03/2026",
-  },
-  {
-    id: "#1002",
-    nombre: "Lucía Fernández",
-    dni: "28911234",
-    plan: "Fibra Óptica 300 Mbps",
-    ip: "192.168.10.82",
-    estado: "Habilitado",
-    fechaAlta: "20/04/2026",
-  },
-  {
-    id: "#1003",
-    nombre: "Carlos Morales",
-    dni: "35678123",
-    plan: "Inalámbrico 50 Mbps",
-    ip: "192.168.20.12",
-    estado: "Suspendido",
-    fechaAlta: "05/06/2026",
-  },
+const API_URL = import.meta.env.VITE_API_URL || "https://jsonplaceholder.typicode.com/users";
+
+const PLANES_DISPONIBLES = [
+  "Fibra Óptica 100 Mbps",
+  "Fibra Óptica 300 Mbps",
+  "Fibra Óptica 600 Mbps",
+  "Inalámbrico 50 Mbps",
 ];
 
 const ClientesPage = () => {
-  const [clientes, setClientes] = useState(CLIENTES_INICIALES);
+  const [clientes, setClientes] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [errorCarga, setErrorCarga] = useState(false);
   const [busqueda, setBusqueda] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("Todos");
-  const [alerta, setAlerta] = useState(null);
 
+  // Formulario de Alta
   const [nombre, setNombre] = useState("");
   const [dni, setDni] = useState("");
   const [plan, setPlan] = useState("");
   const [ip, setIp] = useState("");
 
+  // Modal Ficha Técnica
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
 
-  useEffect(() => {
-    if (alerta) {
-      const timer = setTimeout(() => setAlerta(null), 3500);
-      return () => clearTimeout(timer);
+  const obtenerClientes = async () => {
+    setCargando(true);
+    setErrorCarga(false);
+
+    try {
+      const respuesta = await axios.get(API_URL);
+
+      const datosFormateados = respuesta.data.map((usuario, index) => ({
+        id: `#${1000 + usuario.id}`,
+        nombre: usuario.name,
+        dni: `${30000000 + usuario.id * 1234}`,
+        email: usuario.email,
+        ciudad: usuario.address?.city || "San Miguel de Tucumán",
+        plan: PLANES_DISPONIBLES[index % PLANES_DISPONIBLES.length],
+        ip: `192.168.10.${10 + usuario.id}`,
+        estado: index % 4 === 0 ? "Suspendido" : "Habilitado",
+        fechaAlta: "01/03/2026",
+      }));
+
+      setClientes(datosFormateados);
+    } catch (error) {
+      setErrorCarga(true);
+      Swal.fire({
+        icon: "error",
+        title: "Error de Comunicación",
+        text: "No se pudo sincronizar la nómina desde el servidor central. Verifique la conexión o el enlace configurado.",
+        confirmButtonColor: "#0d6efd",
+      });
+    } finally {
+      setCargando(false);
     }
-  }, [alerta]);
+  };
+
+  useEffect(() => {
+    obtenerClientes();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (!nombre.trim() || !dni.trim() || !plan) {
-      setAlerta({
-        tipo: "danger",
-        mensaje: "Complete los campos obligatorios del abonado.",
+      Swal.fire({
+        icon: "warning",
+        title: "Campos requeridos",
+        text: "Complete todos los datos obligatorios del abonado.",
+        confirmButtonColor: "#0d6efd",
+      });
+      return;
+    }
+
+    if (!/^\d{7,8}$/.test(dni.trim())) {
+      Swal.fire({
+        icon: "warning",
+        title: "Documento inválido",
+        text: "El DNI debe tener entre 7 y 8 dígitos numéricos sin puntos.",
+        confirmButtonColor: "#0d6efd",
       });
       return;
     }
@@ -66,22 +93,26 @@ const ClientesPage = () => {
       id: `#${1000 + clientes.length + 1}`,
       nombre: nombre.trim(),
       dni: dni.trim(),
+      email: `${nombre.toLowerCase().replace(/\s+/g, ".")}@isp.net`,
+      ciudad: "San Miguel de Tucumán",
       plan,
-      ip: ip.trim() || `192.168.10.${Math.floor(Math.random() * 200) + 10}`,
+      ip: ip.trim() || `192.168.10.${Math.floor(Math.random() * 200) + 15}`,
       estado: "Habilitado",
       fechaAlta: new Date().toLocaleDateString("es-AR"),
     };
 
     setClientes([nuevoCliente, ...clientes]);
-    setAlerta({
-      tipo: "success",
-      mensaje: `Abonado ${nuevoCliente.nombre} registrado con éxito.`,
-    });
-
     setNombre("");
     setDni("");
     setPlan("");
     setIp("");
+
+    Swal.fire({
+      icon: "success",
+      title: "Abonado Registrado",
+      text: `El enlace de ${nuevoCliente.nombre} fue aprovisionado con éxito en la nómina.`,
+      confirmButtonColor: "#0d6efd",
+    });
   };
 
   const handleAbrirModal = (cliente) => {
@@ -93,24 +124,41 @@ const ClientesPage = () => {
     if (!clienteSeleccionado) return;
     const nuevoEstado =
       clienteSeleccionado.estado === "Habilitado" ? "Suspendido" : "Habilitado";
+    const accion = nuevoEstado === "Suspendido" ? "suspender" : "habilitar";
 
-    const clientesActualizados = clientes.map((c) =>
-      c.id === clienteSeleccionado.id ? { ...c, estado: nuevoEstado } : c,
-    );
+    Swal.fire({
+      title: `¿Desea ${accion} el enlace?`,
+      text: `El servicio de ${clienteSeleccionado.nombre} pasará a estado ${nuevoEstado}.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: nuevoEstado === "Suspendido" ? "#dc3545" : "#198754",
+      cancelButtonColor: "#6c757d",
+      confirmButtonText: `Sí, ${accion}`,
+      cancelButtonText: "Cancelar",
+    }).then((resultado) => {
+      if (resultado.isConfirmed) {
+        setClientes((prev) =>
+          prev.map((c) =>
+            c.id === clienteSeleccionado.id ? { ...c, estado: nuevoEstado } : c
+          )
+        );
+        setClienteSeleccionado({ ...clienteSeleccionado, estado: nuevoEstado });
 
-    setClientes(clientesActualizados);
-    setClienteSeleccionado({ ...clienteSeleccionado, estado: nuevoEstado });
-    setAlerta({
-      tipo: "warning",
-      mensaje: `Abonado ${clienteSeleccionado.nombre} pasó a estado: ${nuevoEstado}.`,
+        Swal.fire({
+          icon: "success",
+          title: "Estado Actualizado",
+          text: `El abonado ahora se encuentra ${nuevoEstado}.`,
+          confirmButtonColor: "#0d6efd",
+        });
+      }
     });
   };
 
   const totalHabilitados = clientes.filter(
-    (c) => c.estado === "Habilitado",
+    (c) => c.estado === "Habilitado"
   ).length;
   const totalSuspendidos = clientes.filter(
-    (c) => c.estado === "Suspendido",
+    (c) => c.estado === "Suspendido"
   ).length;
 
   const clientesFiltrados = clientes.filter((c) => {
@@ -125,30 +173,8 @@ const ClientesPage = () => {
 
   return (
     <>
-      {alerta && (
-        <div
-          className="position-fixed top-0 end-0 p-3"
-          style={{ zIndex: 1090, marginTop: "60px" }}
-        >
-          <div
-            className={`alert alert-${alerta.tipo} alert-dismissible fade show shadow-lg border-0 d-flex align-items-center gap-2 small py-2 px-3`}
-            role="alert"
-          >
-            <i
-              className={`bi ${alerta.tipo === "success" ? "bi-check-circle-fill" : "bi-exclamation-triangle-fill"} fs-6`}
-            ></i>
-            <div>{alerta.mensaje}</div>
-            <button
-              type="button"
-              className="btn-close ms-auto"
-              onClick={() => setAlerta(null)}
-              aria-label="Cerrar"
-            ></button>
-          </div>
-        </div>
-      )}
-
-      <section className="row g-3 mb-4" aria-label="Resumen de abonados">
+      {/* Resumen Métrico Superior */}
+      <section className="row g-3 mb-4" aria-label="Métricas de clientes">
         <div className="col-12 col-md-4">
           <div className="card border-0 rounded-3 shadow-sm p-3 bg-body-tertiary text-body h-100">
             <div className="d-flex justify-content-between align-items-center">
@@ -164,9 +190,16 @@ const ClientesPage = () => {
             </div>
             <div className="d-flex align-items-baseline gap-2 mt-2">
               <h2 className="h3 fw-bold mb-0 text-body">{clientes.length}</h2>
-              <span className="badge bg-body-secondary text-body-secondary border small">
-                Registrados
+              <span className="badge bg-body-secondary text-body border small">
+                Sincronizados
               </span>
+            </div>
+            <div
+              className="text-body-secondary mt-2"
+              style={{ fontSize: "0.72rem" }}
+            >
+              <i className="bi bi-hdd-network text-primary me-1"></i> Base
+              consolidada en servidor central
             </div>
           </div>
         </div>
@@ -190,6 +223,13 @@ const ClientesPage = () => {
                 Online
               </span>
             </div>
+            <div
+              className="text-body-secondary mt-2"
+              style={{ fontSize: "0.72rem" }}
+            >
+              <i className="bi bi-broadcast text-success me-1"></i>{" "}
+              Aprovisionamiento GPON activo
+            </div>
           </div>
         </div>
 
@@ -212,27 +252,53 @@ const ClientesPage = () => {
                 Corte administrativo
               </span>
             </div>
+            <div
+              className="text-body-secondary mt-2"
+              style={{ fontSize: "0.72rem" }}
+            >
+              <i className="bi bi-exclamation-triangle text-danger me-1"></i>{" "}
+              Enlace bloqueado en OLT
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="mb-4" aria-label="Listado de abonados">
+      {/* Nómina de Abonados */}
+      <section className="mb-4" aria-label="Nómina de abonados">
         <div className="card border-0 rounded-3 shadow-sm overflow-hidden bg-body-tertiary text-body">
           <div className="p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
-              <h1 className="h6 mb-0 fw-bold text-body">
-                Nómina General de Abonados
-              </h1>
+              <div className="d-flex align-items-center gap-2">
+                <h1 className="h6 mb-0 fw-bold text-body">
+                  Nómina General de Abonados
+                </h1>
+                <span className="badge bg-primary-subtle text-primary border border-primary-subtle small">
+                  {clientesFiltrados.length} en pantalla
+                </span>
+              </div>
               <small className="text-body-secondary">
-                Gestión de aprovisionamiento y asignación de IP
+                Padrón general de enlaces GPON y abonados activos
               </small>
             </div>
 
             <div className="d-flex flex-wrap align-items-center gap-2">
+              <button
+                type="button"
+                className="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1 shadow-sm"
+                onClick={obtenerClientes}
+                disabled={cargando}
+                title="Sincronizar nómina"
+              >
+                <i
+                  className={`bi bi-arrow-clockwise ${cargando ? "spin" : ""}`}
+                ></i>
+                <span>Sincronizar</span>
+              </button>
+
               <div
                 className="btn-group btn-group-sm"
                 role="group"
-                aria-label="Filtrar por estado"
+                aria-label="Filtro por estado"
               >
                 {["Todos", "Habilitado", "Suspendido"].map((est) => (
                   <button
@@ -250,13 +316,13 @@ const ClientesPage = () => {
                 className="input-group input-group-sm"
                 style={{ width: "240px" }}
               >
-                <span className="input-group-text bg-body-secondary border-end-0 text-body-secondary">
+                <span className="input-group-text bg-body-secondary border-end-0 text-secondary">
                   <i className="bi bi-search"></i>
                 </span>
                 <input
                   type="search"
                   className="form-control bg-body-secondary border-start-0 text-body"
-                  placeholder="Buscar nombre, DNI o IP..."
+                  placeholder="Buscar titular, DNI o IP..."
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
                 />
@@ -265,86 +331,130 @@ const ClientesPage = () => {
           </div>
 
           <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0 small text-body">
-              <thead className="table-dark text-body-secondary">
-                <tr>
-                  <th scope="col" className="ps-3">
-                    N° CLIENTE
-                  </th>
-                  <th scope="col">TITULAR</th>
-                  <th scope="col">DNI</th>
-                  <th scope="col">PLAN ACTIVO</th>
-                  <th scope="col">IP ASIGNADA</th>
-                  <th scope="col">ESTADO</th>
-                  <th scope="col" className="pe-3 text-end">
-                    ACCIÓN
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {clientesFiltrados.map((c) => (
-                  <tr key={c.id}>
-                    <td className="ps-3 fw-bold text-body-secondary">{c.id}</td>
-                    <td>
-                      <div className="d-flex align-items-center gap-2">
-                        <div
-                          className="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold"
-                          style={{
-                            width: "28px",
-                            height: "28px",
-                            fontSize: "0.72rem",
-                          }}
-                        >
-                          {c.nombre.charAt(0)}
-                        </div>
-                        <span className="fw-semibold text-body">
-                          {c.nombre}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="text-body-secondary">{c.dni}</td>
-                    <td>
-                      <span className="badge bg-body-secondary text-body border fw-normal">
-                        <i className="bi bi-hdd-network me-1 text-primary"></i>
-                        {c.plan}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="badge bg-body-secondary text-body border font-monospace">
-                        {c.ip}
-                      </span>
-                    </td>
-                    <td>
-                      <span
-                        className={`badge ${c.estado === "Habilitado" ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle"} px-2 py-1`}
-                      >
-                        {c.estado}
-                      </span>
-                    </td>
-                    <td className="pe-3 text-end">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline-primary py-1 px-2"
-                        style={{ fontSize: "0.75rem" }}
-                        onClick={() => handleAbrirModal(c)}
-                      >
-                        <i className="bi bi-eye me-1"></i> Ficha
-                      </button>
-                    </td>
+            {cargando ? (
+              <div className="text-center py-5">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Cargando nómina...</span>
+                </div>
+                <p className="text-body-secondary small mt-2 mb-0">
+                  Sincronizando nómina con el servidor central...
+                </p>
+              </div>
+            ) : errorCarga ? (
+              <div className="text-center py-5">
+                <i className="bi bi-cloud-slash text-danger display-6"></i>
+                <h6 className="fw-bold text-body mt-2 mb-1">
+                  Falla de Comunicación
+                </h6>
+                <p className="text-body-secondary small mb-3">
+                  No se pudieron recuperar los registros del servidor central.
+                </p>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  onClick={obtenerClientes}
+                >
+                  Reintentar sincronización
+                </button>
+              </div>
+            ) : (
+              <table className="table table-hover align-middle mb-0 small text-body">
+                <thead className="table-dark text-body-secondary">
+                  <tr>
+                    <th scope="col" className="ps-3">
+                      N° CLIENTE
+                    </th>
+                    <th scope="col">TITULAR</th>
+                    <th scope="col">DNI</th>
+                    <th scope="col">PLAN ACTIVO</th>
+                    <th scope="col">IP ASIGNADA</th>
+                    <th scope="col">ESTADO</th>
+                    <th scope="col" className="pe-3 text-end">
+                      ACCIÓN
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {clientesFiltrados.map((c) => (
+                    <tr key={c.id}>
+                      <td className="ps-3 fw-bold text-body-secondary">{c.id}</td>
+                      <td>
+                        <div className="d-flex align-items-center gap-2">
+                          <div
+                            className="bg-primary-subtle text-primary rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                            style={{
+                              width: "28px",
+                              height: "28px",
+                              fontSize: "0.72rem",
+                            }}
+                          >
+                            {c.nombre.charAt(0)}
+                          </div>
+                          <div>
+                            <span className="fw-semibold text-body d-block">
+                              {c.nombre}
+                            </span>
+                            <small
+                              className="text-muted"
+                              style={{ fontSize: "0.7rem" }}
+                            >
+                              {c.email}
+                            </small>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="text-body-secondary">{c.dni}</td>
+                      <td>
+                        <span className="badge bg-body-secondary text-body border fw-normal">
+                          <i className="bi bi-hdd-network me-1 text-primary"></i>
+                          {c.plan}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="badge bg-body-secondary text-body border font-monospace">
+                          {c.ip}
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          className={`badge ${c.estado === "Habilitado" ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle"} px-2 py-1`}
+                        >
+                          {c.estado}
+                        </span>
+                      </td>
+                      <td className="pe-3 text-end">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-primary py-1 px-2"
+                          style={{ fontSize: "0.75rem" }}
+                          onClick={() => handleAbrirModal(c)}
+                        >
+                          <i className="bi bi-eye me-1"></i> Ficha
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {clientesFiltrados.length === 0 && (
+                    <tr>
+                      <td colSpan="7" className="text-center py-4 text-muted">
+                        No se encontraron abonados con los criterios ingresados.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       </section>
 
-      <section aria-label="Aprovisionamiento de nuevos abonados">
+      {/* Formulario de Alta */}
+      <section aria-label="Alta de abonados">
         <div className="card border-0 rounded-3 shadow-sm p-4 bg-body-tertiary text-body">
           <div className="border-bottom pb-2 mb-3">
             <h2 className="h6 fw-bold mb-1 text-body">Alta de Nuevo Abonado</h2>
             <p className="text-body-secondary small mb-0">
-              Aprovisionamiento de enlace en memoria
+              Aprovisionamiento de enlace en nómina activa
             </p>
           </div>
 
@@ -365,12 +475,12 @@ const ClientesPage = () => {
               </div>
               <div className="col-12 col-md-6">
                 <label className="form-label fw-semibold small">
-                  DNI / CUIT
+                  DNI / Documento
                 </label>
                 <input
                   type="number"
                   className="form-control form-control-sm bg-body text-body"
-                  placeholder="Sin puntos ni guiones"
+                  placeholder="Sin puntos (7 u 8 dígitos)"
                   value={dni}
                   onChange={(e) => setDni(e.target.value)}
                   required
@@ -389,23 +499,16 @@ const ClientesPage = () => {
                   <option value="" disabled>
                     Seleccione velocidad...
                   </option>
-                  <option value="Fibra Óptica 100 Mbps">
-                    Fibra Óptica 100 Mbps
-                  </option>
-                  <option value="Fibra Óptica 300 Mbps">
-                    Fibra Óptica 300 Mbps
-                  </option>
-                  <option value="Fibra Óptica 600 Mbps">
-                    Fibra Óptica 600 Mbps
-                  </option>
-                  <option value="Inalámbrico 50 Mbps">
-                    Inalámbrico 50 Mbps
-                  </option>
+                  {PLANES_DISPONIBLES.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="col-12 col-md-6">
                 <label className="form-label fw-semibold small">
-                  IP Estática (Opcional)
+                  IP Asignada (Opcional)
                 </label>
                 <input
                   type="text"
@@ -420,7 +523,7 @@ const ClientesPage = () => {
             <div className="d-flex gap-2 mt-4 pt-3 border-top">
               <button
                 type="submit"
-                className="btn btn-sm btn-primary px-3 fw-semibold"
+                className="btn btn-sm btn-primary px-3 fw-semibold shadow-sm"
               >
                 Registrar y Aprovisionar
               </button>
@@ -429,6 +532,7 @@ const ClientesPage = () => {
         </div>
       </section>
 
+      {/* Modal Ficha Técnica */}
       <Modal
         show={mostrarModal}
         onHide={() => setMostrarModal(false)}
@@ -454,8 +558,16 @@ const ClientesPage = () => {
                 </span>
               </li>
               <li className="d-flex justify-content-between py-2 border-bottom">
+                <span className="text-body-secondary">Email de Contacto:</span>
+                <span>{clienteSeleccionado.email}</span>
+              </li>
+              <li className="d-flex justify-content-between py-2 border-bottom">
                 <span className="text-body-secondary">DNI / Documento:</span>
                 <span>{clienteSeleccionado.dni}</span>
+              </li>
+              <li className="d-flex justify-content-between py-2 border-bottom">
+                <span className="text-body-secondary">Zona / Localidad:</span>
+                <span>{clienteSeleccionado.ciudad}</span>
               </li>
               <li className="d-flex justify-content-between py-2 border-bottom">
                 <span className="text-body-secondary">Plan Contratado:</span>
@@ -468,10 +580,6 @@ const ClientesPage = () => {
                 <span className="badge bg-body-secondary text-body border font-monospace">
                   {clienteSeleccionado.ip}
                 </span>
-              </li>
-              <li className="d-flex justify-content-between py-2 border-bottom">
-                <span className="text-body-secondary">Fecha de Alta:</span>
-                <span>{clienteSeleccionado.fechaAlta}</span>
               </li>
               <li className="d-flex justify-content-between py-2">
                 <span className="text-body-secondary">

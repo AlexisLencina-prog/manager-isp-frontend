@@ -2,6 +2,12 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
+  const handleNavClick = () => {
+    if (window.innerWidth < 992) {
+      setSidebarOpen(false);
+    }
+  };
+
   return (
     <aside
       className={`app-sidebar bg-body-tertiary border-end text-body ${sidebarOpen ? "show" : "hidden"}`}
@@ -14,20 +20,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         <div className="d-flex align-items-center gap-2">
           <div
             className="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center shadow-sm"
-            style={{ width: "34px", height: "34px" }}
+            style={{ width: "32px", height: "32px" }}
           >
             <i className="bi bi-broadcast fs-5"></i>
           </div>
           <div className="lh-sm">
             <span
               className="fw-bold text-body d-block"
-              style={{ fontSize: "0.92rem" }}
+              style={{ fontSize: "0.88rem" }}
             >
               ISP<span className="text-primary">MANAGER</span>
             </span>
             <span
               className="text-body-secondary d-block"
-              style={{ fontSize: "0.65rem" }}
+              style={{ fontSize: "0.62rem" }}
             >
               Operations NOC
             </span>
@@ -63,9 +69,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
               isActive
                 ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
-                : "text-body-secondary hover-bg-body"
+                : "text-body-secondary"
             }`
           }
+          onClick={handleNavClick}
         >
           <i className="bi bi-grid-fill"></i>
           <span>Panel Principal</span>
@@ -77,9 +84,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
               isActive
                 ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
-                : "text-body-secondary hover-bg-body"
+                : "text-body-secondary"
             }`
           }
+          onClick={handleNavClick}
         >
           <i className="bi bi-people-fill"></i>
           <span>Nómina Abonados</span>
@@ -98,9 +106,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
               isActive
                 ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
-                : "text-body-secondary hover-bg-body"
+                : "text-body-secondary"
             }`
           }
+          onClick={handleNavClick}
         >
           <i className="bi bi-hdd-stack-fill"></i>
           <span>Planes & Enlaces</span>
@@ -112,9 +121,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
               isActive
                 ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
-                : "text-body-secondary hover-bg-body"
+                : "text-body-secondary"
             }`
           }
+          onClick={handleNavClick}
         >
           <i className="bi bi-headset"></i>
           <span>Mesa de Tickets</span>
@@ -127,13 +137,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           <div className="small lh-sm">
             <span
               className="fw-semibold d-block text-body"
-              style={{ fontSize: "0.78rem" }}
+              style={{ fontSize: "0.75rem" }}
             >
               OLT Principal Online
             </span>
             <span
               className="text-body-secondary"
-              style={{ fontSize: "0.70rem" }}
+              style={{ fontSize: "0.68rem" }}
             >
               Latencia: 8 ms
             </span>
