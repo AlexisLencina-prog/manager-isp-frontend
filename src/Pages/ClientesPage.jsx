@@ -3,7 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Modal, Button } from "react-bootstrap";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || "https://jsonplaceholder.typicode.com/users";
 
 const PLANES_DISPONIBLES = [
   "Fibra Óptica 100 Mbps",
@@ -139,8 +139,8 @@ const ClientesPage = () => {
       if (resultado.isConfirmed) {
         setClientes((prev) =>
           prev.map((c) =>
-            c.id === clienteSeleccionado.id ? { ...c, estado: nuevoEstado } : c,
-          ),
+            c.id === clienteSeleccionado.id ? { ...c, estado: nuevoEstado } : c
+          )
         );
         setClienteSeleccionado({ ...clienteSeleccionado, estado: nuevoEstado });
 
@@ -155,10 +155,10 @@ const ClientesPage = () => {
   };
 
   const totalHabilitados = clientes.filter(
-    (c) => c.estado === "Habilitado",
+    (c) => c.estado === "Habilitado"
   ).length;
   const totalSuspendidos = clientes.filter(
-    (c) => c.estado === "Suspendido",
+    (c) => c.estado === "Suspendido"
   ).length;
 
   const clientesFiltrados = clientes.filter((c) => {
@@ -176,9 +176,9 @@ const ClientesPage = () => {
       {/* Resumen Métrico Superior */}
       <section className="row g-3 mb-4" aria-label="Métricas de clientes">
         <div className="col-12 col-md-4">
-          <div className="card border rounded-3 shadow-sm p-3 bg-white h-100">
+          <div className="card border-0 rounded-3 shadow-sm p-3 bg-body-tertiary text-body h-100">
             <div className="d-flex justify-content-between align-items-center">
-              <span className="text-secondary small fw-semibold">
+              <span className="text-body-secondary small fw-semibold">
                 Parque Total de Clientes
               </span>
               <div
@@ -189,13 +189,13 @@ const ClientesPage = () => {
               </div>
             </div>
             <div className="d-flex align-items-baseline gap-2 mt-2">
-              <h2 className="h3 fw-bold mb-0 text-dark">{clientes.length}</h2>
-              <span className="badge bg-light text-secondary border small">
+              <h2 className="h3 fw-bold mb-0 text-body">{clientes.length}</h2>
+              <span className="badge bg-body-secondary text-body border small">
                 Sincronizados
               </span>
             </div>
             <div
-              className="text-secondary mt-2"
+              className="text-body-secondary mt-2"
               style={{ fontSize: "0.72rem" }}
             >
               <i className="bi bi-hdd-network text-primary me-1"></i> Base
@@ -205,9 +205,9 @@ const ClientesPage = () => {
         </div>
 
         <div className="col-12 col-md-4">
-          <div className="card border rounded-3 shadow-sm p-3 bg-white h-100">
+          <div className="card border-0 rounded-3 shadow-sm p-3 bg-body-tertiary text-body h-100">
             <div className="d-flex justify-content-between align-items-center">
-              <span className="text-secondary small fw-semibold">
+              <span className="text-body-secondary small fw-semibold">
                 Enlaces Habilitados
               </span>
               <div
@@ -218,13 +218,13 @@ const ClientesPage = () => {
               </div>
             </div>
             <div className="d-flex align-items-baseline gap-2 mt-2">
-              <h2 className="h3 fw-bold mb-0 text-dark">{totalHabilitados}</h2>
+              <h2 className="h3 fw-bold mb-0 text-body">{totalHabilitados}</h2>
               <span className="badge bg-success-subtle text-success border border-success-subtle small">
                 Online
               </span>
             </div>
             <div
-              className="text-secondary mt-2"
+              className="text-body-secondary mt-2"
               style={{ fontSize: "0.72rem" }}
             >
               <i className="bi bi-broadcast text-success me-1"></i>{" "}
@@ -234,9 +234,9 @@ const ClientesPage = () => {
         </div>
 
         <div className="col-12 col-md-4">
-          <div className="card border rounded-3 shadow-sm p-3 bg-white h-100">
+          <div className="card border-0 rounded-3 shadow-sm p-3 bg-body-tertiary text-body h-100">
             <div className="d-flex justify-content-between align-items-center">
-              <span className="text-secondary small fw-semibold">
+              <span className="text-body-secondary small fw-semibold">
                 Enlaces Suspendidos
               </span>
               <div
@@ -247,13 +247,13 @@ const ClientesPage = () => {
               </div>
             </div>
             <div className="d-flex align-items-baseline gap-2 mt-2">
-              <h2 className="h3 fw-bold mb-0 text-dark">{totalSuspendidos}</h2>
+              <h2 className="h3 fw-bold mb-0 text-body">{totalSuspendidos}</h2>
               <span className="badge bg-danger-subtle text-danger border border-danger-subtle small">
                 Corte administrativo
               </span>
             </div>
             <div
-              className="text-secondary mt-2"
+              className="text-body-secondary mt-2"
               style={{ fontSize: "0.72rem" }}
             >
               <i className="bi bi-exclamation-triangle text-danger me-1"></i>{" "}
@@ -265,18 +265,18 @@ const ClientesPage = () => {
 
       {/* Nómina de Abonados */}
       <section className="mb-4" aria-label="Nómina de abonados">
-        <div className="card border rounded-3 shadow-sm overflow-hidden bg-white">
+        <div className="card border-0 rounded-3 shadow-sm overflow-hidden bg-body-tertiary text-body">
           <div className="p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
               <div className="d-flex align-items-center gap-2">
-                <h1 className="h6 mb-0 fw-bold text-dark">
+                <h1 className="h6 mb-0 fw-bold text-body">
                   Nómina General de Abonados
                 </h1>
                 <span className="badge bg-primary-subtle text-primary border border-primary-subtle small">
                   {clientesFiltrados.length} en pantalla
                 </span>
               </div>
-              <small className="text-secondary">
+              <small className="text-body-secondary">
                 Padrón general de enlaces GPON y abonados activos
               </small>
             </div>
@@ -316,12 +316,12 @@ const ClientesPage = () => {
                 className="input-group input-group-sm"
                 style={{ width: "240px" }}
               >
-                <span className="input-group-text bg-light border-end-0 text-secondary">
+                <span className="input-group-text bg-body-secondary border-end-0 text-secondary">
                   <i className="bi bi-search"></i>
                 </span>
                 <input
                   type="search"
-                  className="form-control bg-light border-start-0"
+                  className="form-control bg-body-secondary border-start-0 text-body"
                   placeholder="Buscar titular, DNI o IP..."
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
@@ -336,17 +336,17 @@ const ClientesPage = () => {
                 <div className="spinner-border text-primary" role="status">
                   <span className="visually-hidden">Cargando nómina...</span>
                 </div>
-                <p className="text-secondary small mt-2 mb-0">
+                <p className="text-body-secondary small mt-2 mb-0">
                   Sincronizando nómina con el servidor central...
                 </p>
               </div>
             ) : errorCarga ? (
               <div className="text-center py-5">
                 <i className="bi bi-cloud-slash text-danger display-6"></i>
-                <h6 className="fw-bold text-dark mt-2 mb-1">
+                <h6 className="fw-bold text-body mt-2 mb-1">
                   Falla de Comunicación
                 </h6>
-                <p className="text-secondary small mb-3">
+                <p className="text-body-secondary small mb-3">
                   No se pudieron recuperar los registros del servidor central.
                 </p>
                 <button
@@ -358,8 +358,8 @@ const ClientesPage = () => {
                 </button>
               </div>
             ) : (
-              <table className="table table-hover align-middle mb-0 small">
-                <thead className="table-light text-secondary">
+              <table className="table table-hover align-middle mb-0 small text-body">
+                <thead className="table-dark text-body-secondary">
                   <tr>
                     <th scope="col" className="ps-3">
                       N° CLIENTE
@@ -377,7 +377,7 @@ const ClientesPage = () => {
                 <tbody>
                   {clientesFiltrados.map((c) => (
                     <tr key={c.id}>
-                      <td className="ps-3 fw-bold text-secondary">{c.id}</td>
+                      <td className="ps-3 fw-bold text-body-secondary">{c.id}</td>
                       <td>
                         <div className="d-flex align-items-center gap-2">
                           <div
@@ -391,7 +391,7 @@ const ClientesPage = () => {
                             {c.nombre.charAt(0)}
                           </div>
                           <div>
-                            <span className="fw-semibold text-dark d-block">
+                            <span className="fw-semibold text-body d-block">
                               {c.nombre}
                             </span>
                             <small
@@ -403,15 +403,15 @@ const ClientesPage = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="text-secondary">{c.dni}</td>
+                      <td className="text-body-secondary">{c.dni}</td>
                       <td>
-                        <span className="badge bg-light text-secondary border fw-normal">
+                        <span className="badge bg-body-secondary text-body border fw-normal">
                           <i className="bi bi-hdd-network me-1 text-primary"></i>
                           {c.plan}
                         </span>
                       </td>
                       <td>
-                        <span className="badge bg-light text-dark border font-monospace">
+                        <span className="badge bg-body-secondary text-body border font-monospace">
                           {c.ip}
                         </span>
                       </td>
@@ -450,10 +450,10 @@ const ClientesPage = () => {
 
       {/* Formulario de Alta */}
       <section aria-label="Alta de abonados">
-        <div className="card border rounded-3 shadow-sm p-4 bg-white">
+        <div className="card border-0 rounded-3 shadow-sm p-4 bg-body-tertiary text-body">
           <div className="border-bottom pb-2 mb-3">
-            <h2 className="h6 fw-bold mb-1 text-dark">Alta de Nuevo Abonado</h2>
-            <p className="text-secondary small mb-0">
+            <h2 className="h6 fw-bold mb-1 text-body">Alta de Nuevo Abonado</h2>
+            <p className="text-body-secondary small mb-0">
               Aprovisionamiento de enlace en nómina activa
             </p>
           </div>
@@ -466,7 +466,7 @@ const ClientesPage = () => {
                 </label>
                 <input
                   type="text"
-                  className="form-control form-control-sm"
+                  className="form-control form-control-sm bg-body text-body"
                   placeholder="Ej. Roberto Sánchez"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
@@ -479,7 +479,7 @@ const ClientesPage = () => {
                 </label>
                 <input
                   type="number"
-                  className="form-control form-control-sm"
+                  className="form-control form-control-sm bg-body text-body"
                   placeholder="Sin puntos (7 u 8 dígitos)"
                   value={dni}
                   onChange={(e) => setDni(e.target.value)}
@@ -491,7 +491,7 @@ const ClientesPage = () => {
                   Plan Comercial
                 </label>
                 <select
-                  className="form-select form-select-sm"
+                  className="form-select form-select-sm bg-body text-body"
                   value={plan}
                   onChange={(e) => setPlan(e.target.value)}
                   required
@@ -512,7 +512,7 @@ const ClientesPage = () => {
                 </label>
                 <input
                   type="text"
-                  className="form-control form-control-sm"
+                  className="form-control form-control-sm bg-body text-body"
                   placeholder="192.168.10.x"
                   value={ip}
                   onChange={(e) => setIp(e.target.value)}
@@ -533,51 +533,58 @@ const ClientesPage = () => {
       </section>
 
       {/* Modal Ficha Técnica */}
-      <Modal show={mostrarModal} onHide={() => setMostrarModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title className="h6 fw-bold mb-0">
+      <Modal
+        show={mostrarModal}
+        onHide={() => setMostrarModal(false)}
+        centered
+        className="text-body"
+      >
+        <Modal.Header closeButton className="bg-body-tertiary border-bottom">
+          <Modal.Title className="h6 fw-bold mb-0 text-body">
             Ficha Técnica del Abonado
           </Modal.Title>
         </Modal.Header>
-        <Modal.Body className="small">
+        <Modal.Body className="small bg-body-tertiary text-body">
           {clienteSeleccionado && (
             <ul className="list-unstyled mb-0">
               <li className="d-flex justify-content-between py-2 border-bottom">
-                <span className="text-secondary">Identificador:</span>
+                <span className="text-body-secondary">Identificador:</span>
                 <strong>{clienteSeleccionado.id}</strong>
               </li>
               <li className="d-flex justify-content-between py-2 border-bottom">
-                <span className="text-secondary">Titular:</span>
-                <span className="fw-semibold text-dark">
+                <span className="text-body-secondary">Titular:</span>
+                <span className="fw-semibold text-body">
                   {clienteSeleccionado.nombre}
                 </span>
               </li>
               <li className="d-flex justify-content-between py-2 border-bottom">
-                <span className="text-secondary">Email de Contacto:</span>
+                <span className="text-body-secondary">Email de Contacto:</span>
                 <span>{clienteSeleccionado.email}</span>
               </li>
               <li className="d-flex justify-content-between py-2 border-bottom">
-                <span className="text-secondary">DNI / Documento:</span>
+                <span className="text-body-secondary">DNI / Documento:</span>
                 <span>{clienteSeleccionado.dni}</span>
               </li>
               <li className="d-flex justify-content-between py-2 border-bottom">
-                <span className="text-secondary">Zona / Localidad:</span>
+                <span className="text-body-secondary">Zona / Localidad:</span>
                 <span>{clienteSeleccionado.ciudad}</span>
               </li>
               <li className="d-flex justify-content-between py-2 border-bottom">
-                <span className="text-secondary">Plan Contratado:</span>
-                <span className="badge bg-light text-secondary border">
+                <span className="text-body-secondary">Plan Contratado:</span>
+                <span className="badge bg-body-secondary text-body border">
                   {clienteSeleccionado.plan}
                 </span>
               </li>
               <li className="d-flex justify-content-between py-2 border-bottom">
-                <span className="text-secondary">IP Asignada:</span>
-                <span className="badge bg-light text-dark border font-monospace">
+                <span className="text-body-secondary">IP Asignada:</span>
+                <span className="badge bg-body-secondary text-body border font-monospace">
                   {clienteSeleccionado.ip}
                 </span>
               </li>
               <li className="d-flex justify-content-between py-2">
-                <span className="text-secondary">Estado del Servicio:</span>
+                <span className="text-body-secondary">
+                  Estado del Servicio:
+                </span>
                 <span
                   className={`badge ${clienteSeleccionado.estado === "Habilitado" ? "bg-success-subtle text-success border border-success-subtle" : "bg-danger-subtle text-danger border border-danger-subtle"}`}
                 >
@@ -587,7 +594,7 @@ const ClientesPage = () => {
             </ul>
           )}
         </Modal.Body>
-        <Modal.Footer className="d-flex justify-content-between">
+        <Modal.Footer className="d-flex justify-content-between bg-body-tertiary border-top">
           <Button
             variant={
               clienteSeleccionado?.estado === "Habilitado"

@@ -1,19 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
+const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen, tema, setTema }) => {
+  const toggleTema = () => {
+    setTema((prev) => (prev === "light" ? "dark" : "light"));
+  };
+
   return (
     <header
-      className="bg-white border-bottom sticky-top d-flex align-items-center justify-content-between px-3 px-lg-4"
+      className="bg-body-tertiary border-bottom sticky-top d-flex align-items-center justify-content-between px-3 px-lg-4"
       style={{ height: "60px", zIndex: 1020 }}
     >
       <div className="d-flex align-items-center gap-2">
-        {/* Solo visible en celulares y tablets (<992px) */}
         <button
           type="button"
-          className="btn btn-sm btn-light border d-lg-none d-flex align-items-center justify-content-center p-2"
+          className="btn btn-sm btn-outline-secondary d-lg-none d-flex align-items-center justify-content-center p-2"
           onClick={() => setSidebarOpen((prev) => !prev)}
-          title="Mostrar/ocultar menú"
+          title="Alternar menú"
           aria-label="Alternar menú"
         >
           <i className="bi bi-list fs-5"></i>
@@ -23,19 +26,33 @@ const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
           className="input-group input-group-sm d-none d-md-flex"
           style={{ width: "240px" }}
         >
-          <span className="input-group-text bg-light border-end-0 text-secondary">
+          <span className="input-group-text bg-body-secondary border-end-0 text-secondary">
             <i className="bi bi-search"></i>
           </span>
           <input
             type="search"
-            className="form-control bg-light border-start-0"
+            className="form-control bg-body-secondary border-start-0 text-body"
             placeholder="Buscar IP o abonado..."
           />
         </div>
       </div>
 
       <div className="d-flex align-items-center gap-2 gap-sm-3">
-        <span className="badge bg-light border text-secondary fw-normal px-2 py-1 small d-none d-sm-inline-flex align-items-center gap-2">
+        <button
+          type="button"
+          className={`btn btn-sm ${tema === "dark" ? "btn-outline-warning" : "btn-outline-secondary"} d-flex align-items-center gap-1`}
+          onClick={toggleTema}
+          title="Cambiar Modo Claro/Oscuro"
+        >
+          <i
+            className={`bi ${tema === "dark" ? "bi-sun-fill text-warning" : "bi-moon-stars-fill"}`}
+          ></i>
+          <span className="d-none d-md-inline small fw-semibold">
+            {tema === "dark" ? "Modo Claro" : "Modo Oscuro"}
+          </span>
+        </button>
+
+        <span className="badge bg-body-secondary border text-secondary fw-normal px-2 py-1 small d-none d-sm-inline-flex align-items-center gap-2">
           <span
             className="rounded-circle bg-success"
             style={{ width: "7px", height: "7px" }}
@@ -67,7 +84,7 @@ const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen }) => {
             <i className="bi bi-person-circle fs-5"></i>
           </div>
           <div className="d-none d-sm-block lh-1 text-start">
-            <span className="fw-bold text-dark small d-block">Grupo 16</span>
+            <span className="fw-bold text-body small d-block">Grupo 16</span>
             <span className="text-secondary" style={{ fontSize: "0.68rem" }}>
               Guardia NOC
             </span>

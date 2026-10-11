@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import KpiCard from "../Components/KpiCard";
 import {
   AreaChart,
@@ -75,7 +76,6 @@ const DashboardPage = () => {
         (Math.random() * (4.7 - 2.8) + 2.8).toFixed(1),
       );
       setTraficoVivo(variacion);
-
       setDatosGrafico((prev) => {
         const copia = [...prev];
         copia[copia.length - 1] = {
@@ -85,7 +85,6 @@ const DashboardPage = () => {
         };
         return copia;
       });
-
       setNodos((prevNodos) =>
         prevNodos.map((nodo) => {
           const delta = Math.floor(Math.random() * 5) - 2;
@@ -94,7 +93,6 @@ const DashboardPage = () => {
         }),
       );
     }, 8000);
-
     return () => clearInterval(intervalo);
   }, []);
 
@@ -109,7 +107,7 @@ const DashboardPage = () => {
     <>
       {/* Banner de Estado NOC */}
       <section className="mb-3" aria-label="Estado general">
-        <div className="card border rounded-3 p-3 bg-white shadow-sm">
+        <div className="card border-0 rounded-3 p-3 bg-body-tertiary text-body shadow-sm">
           <div className="d-flex flex-wrap justify-content-between align-items-center gap-2">
             <div className="d-flex align-items-center gap-2">
               <span className="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 d-inline-flex align-items-center gap-2">
@@ -119,12 +117,12 @@ const DashboardPage = () => {
                 ></span>
                 Troncal GPON Online
               </span>
-              <span className="fw-bold text-dark small">
+              <span className="fw-bold text-body small">
                 Disponibilidad de Red: 99.98% SLA
               </span>
             </div>
-            <div className="text-secondary small d-flex align-items-center gap-2">
-              <span className="badge bg-light text-secondary border">
+            <div className="text-body-secondary small d-flex align-items-center gap-2">
+              <span className="badge bg-body-secondary text-body border">
                 Sincronización NOC cada 8s
               </span>
             </div>
@@ -174,15 +172,15 @@ const DashboardPage = () => {
         </div>
       </section>
 
-      {/* Telemetría con Recharts */}
+      {/* Telemetría con Recharts adaptada a Dark Mode */}
       <section className="mb-4" aria-label="Telemetría de tráfico en vivo">
-        <div className="card border rounded-3 bg-white shadow-sm p-3 p-md-4">
+        <div className="card border-0 rounded-3 bg-body-tertiary text-body shadow-sm p-3 p-md-4">
           <div className="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
             <div>
-              <h2 className="h6 fw-bold mb-1 text-dark">
+              <h2 className="h6 fw-bold mb-1 text-body">
                 Telemetría de Tráfico en Tiempo Real
               </h2>
-              <p className="text-secondary small mb-0">
+              <p className="text-body-secondary small mb-0">
                 Consumo acumulado en el nodo de salida (Gbps)
               </p>
             </div>
@@ -202,29 +200,33 @@ const DashboardPage = () => {
               >
                 <defs>
                   <linearGradient id="colorDown" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0d6efd" stopOpacity={0.25} />
+                    <stop offset="5%" stopColor="#0d6efd" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#0d6efd" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorUp" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0dcaf0" stopOpacity={0.25} />
+                    <stop offset="5%" stopColor="#0dcaf0" stopOpacity={0.3} />
                     <stop offset="95%" stopColor="#0dcaf0" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="rgba(148, 163, 184, 0.2)"
+                />
                 <XAxis
                   dataKey="hora"
-                  tick={{ fontSize: 11, fill: "#64748b" }}
-                  stroke="#cbd5e1"
+                  tick={{ fontSize: 11, fill: "currentColor" }}
+                  stroke="rgba(148, 163, 184, 0.4)"
                 />
                 <YAxis
-                  tick={{ fontSize: 11, fill: "#64748b" }}
-                  stroke="#cbd5e1"
+                  tick={{ fontSize: 11, fill: "currentColor" }}
+                  stroke="rgba(148, 163, 184, 0.4)"
                   unit="G"
                 />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#ffffff",
-                    borderColor: "#e2e8f0",
+                    backgroundColor: "var(--bs-tertiary-bg)",
+                    borderColor: "var(--bs-border-color)",
+                    color: "var(--bs-body-color)",
                     borderRadius: "8px",
                     fontSize: "12px",
                   }}
@@ -258,19 +260,16 @@ const DashboardPage = () => {
 
       {/* Mapa Satelital y Ficha Técnica Equilibrada */}
       <section className="mb-4" aria-label="Mapa cartográfico de cobertura">
-        <div className="card border rounded-3 bg-white shadow-sm overflow-hidden">
-          {/* Cabecera con selector de nodos limpio */}
+        <div className="card border-0 rounded-3 bg-body-tertiary text-body shadow-sm overflow-hidden">
           <div className="p-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
             <div>
-              <h2 className="h6 fw-bold mb-0 text-dark">
+              <h2 className="h6 fw-bold mb-0 text-body">
                 Topología de Nodos y Cobertura Satelital
               </h2>
-              <small className="text-secondary">
+              <small className="text-body-secondary">
                 Inspección geográfica del tendido urbano
               </small>
             </div>
-
-            {/* Botones de selección ordenados en la cabecera */}
             <div
               className="btn-group btn-group-sm"
               role="group"
@@ -291,7 +290,6 @@ const DashboardPage = () => {
           </div>
 
           <div className="row g-0">
-            {/* Contenedor del Mapa con margen propio (no pegado al borde) */}
             <div className="col-12 col-lg-8 border-end p-3">
               <div
                 className="w-100 rounded-3 overflow-hidden border shadow-sm"
@@ -310,11 +308,10 @@ const DashboardPage = () => {
               </div>
             </div>
 
-            {/* Ficha técnica en cuadrícula de métricas limpias */}
             <div className="col-12 col-lg-4 p-3 d-flex flex-column justify-content-between">
               <div>
                 <div className="d-flex justify-content-between align-items-center mb-2">
-                  <span className="badge bg-light text-secondary border small">
+                  <span className="badge bg-body-secondary text-body border small">
                     {nodoActivo.id}
                   </span>
                   <span
@@ -323,20 +320,18 @@ const DashboardPage = () => {
                     {nodoActivo.estado}
                   </span>
                 </div>
-
-                <h3 className="h6 fw-bold text-dark mb-0">
+                <h3 className="h6 fw-bold text-body mb-0">
                   {nodoActivo.nombre}
                 </h3>
-                <small className="text-muted d-block mb-3">
+                <small className="text-body-secondary d-block mb-3">
                   {nodoActivo.zona}
                 </small>
 
-                {/* Grid de 4 datos clave */}
                 <div className="row g-2 mb-3">
                   <div className="col-6">
-                    <div className="p-2 bg-light rounded-2 border text-center">
+                    <div className="p-2 bg-body rounded-2 border text-center">
                       <span
-                        className="text-secondary d-block"
+                        className="text-body-secondary d-block"
                         style={{ fontSize: "0.68rem" }}
                       >
                         LATENCIA
@@ -347,41 +342,41 @@ const DashboardPage = () => {
                     </div>
                   </div>
                   <div className="col-6">
-                    <div className="p-2 bg-light rounded-2 border text-center">
+                    <div className="p-2 bg-body rounded-2 border text-center">
                       <span
-                        className="text-secondary d-block"
+                        className="text-body-secondary d-block"
                         style={{ fontSize: "0.68rem" }}
                       >
                         POTENCIA RX
                       </span>
-                      <strong className="text-dark small">
+                      <strong className="text-body small">
                         {nodoActivo.potenciaOptica}
                       </strong>
                     </div>
                   </div>
                   <div className="col-6">
-                    <div className="p-2 bg-light rounded-2 border text-center">
+                    <div className="p-2 bg-body rounded-2 border text-center">
                       <span
-                        className="text-secondary d-block"
+                        className="text-body-secondary d-block"
                         style={{ fontSize: "0.68rem" }}
                       >
                         ABONADOS
                       </span>
-                      <strong className="text-dark small">
+                      <strong className="text-body small">
                         {nodoActivo.abonados}
                       </strong>
                     </div>
                   </div>
                   <div className="col-6">
-                    <div className="p-2 bg-light rounded-2 border text-center">
+                    <div className="p-2 bg-body rounded-2 border text-center">
                       <span
-                        className="text-secondary d-block"
+                        className="text-body-secondary d-block"
                         style={{ fontSize: "0.68rem" }}
                       >
                         HARDWARE
                       </span>
                       <strong
-                        className="text-truncate d-block text-dark"
+                        className="text-truncate d-block text-body"
                         style={{ fontSize: "0.72rem" }}
                       >
                         {nodoActivo.tecnologia}
@@ -390,16 +385,15 @@ const DashboardPage = () => {
                   </div>
                 </div>
 
-                {/* Nivel de saturación */}
-                <div className="p-2 bg-light rounded-2 border">
+                <div className="p-2 bg-body rounded-2 border">
                   <div className="d-flex justify-content-between mb-1 small">
                     <span
-                      className="text-secondary"
+                      className="text-body-secondary"
                       style={{ fontSize: "0.75rem" }}
                     >
                       Saturación de puerto:
                     </span>
-                    <strong className="text-dark">
+                    <strong className="text-body">
                       {nodoActivo.capacidad}%
                     </strong>
                   </div>
@@ -416,9 +410,12 @@ const DashboardPage = () => {
                 type="button"
                 className="btn btn-sm btn-outline-primary w-100 fw-semibold mt-3"
                 onClick={() =>
-                  alert(
-                    `Auditoría de loopback y ping enviada a ${nodoActivo.nombre}`,
-                  )
+                  Swal.fire({
+                    title: `Auditoría NOC: ${nodoActivo.nombre}`,
+                    html: `Prueba de loopback y traza ICMP ejecutada con éxito.<br><b>Latencia:</b> ${nodoActivo.latencia} ms<br><b>Potencia RX:</b> ${nodoActivo.potenciaOptica}`,
+                    icon: "info",
+                    confirmButtonColor: "#0d6efd",
+                  })
                 }
               >
                 <i className="bi bi-activity me-1"></i> Auditar Tráfico del Nodo
@@ -430,15 +427,15 @@ const DashboardPage = () => {
 
       {/* Inventario de Nodos */}
       <section aria-label="Inventario de nodos">
-        <div className="card border rounded-3 bg-white shadow-sm overflow-hidden">
+        <div className="card border-0 rounded-3 bg-body-tertiary text-body shadow-sm overflow-hidden">
           <div className="p-3 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <h2 className="h6 fw-bold mb-0 text-dark">
+            <h2 className="h6 fw-bold mb-0 text-body">
               Inventario de Nodos Troncales
             </h2>
             <div style={{ width: "220px" }}>
               <input
                 type="search"
-                className="form-control form-control-sm"
+                className="form-control form-control-sm bg-body text-body"
                 placeholder="Filtrar por zona o nodo..."
                 value={filtroTexto}
                 onChange={(e) => setFiltroTexto(e.target.value)}
@@ -447,8 +444,8 @@ const DashboardPage = () => {
           </div>
 
           <div className="table-responsive">
-            <table className="table table-hover align-middle mb-0 small">
-              <thead className="table-light text-secondary">
+            <table className="table table-hover align-middle mb-0 small text-body">
+              <thead className="table-dark text-body-secondary">
                 <tr>
                   <th scope="col" className="ps-3">
                     ID
@@ -470,15 +467,19 @@ const DashboardPage = () => {
                     style={{ cursor: "pointer" }}
                     className={nodoActivo.id === nodo.id ? "table-active" : ""}
                   >
-                    <td className="ps-3 fw-bold text-secondary">{nodo.id}</td>
-                    <td>
-                      <span className="fw-semibold text-dark">
-                        {nodo.nombre}
-                      </span>
-                      <small className="text-muted d-block">{nodo.zona}</small>
+                    <td className="ps-3 fw-bold text-body-secondary">
+                      {nodo.id}
                     </td>
                     <td>
-                      <span className="badge bg-light text-secondary border">
+                      <span className="fw-semibold text-body">
+                        {nodo.nombre}
+                      </span>
+                      <small className="text-body-secondary d-block">
+                        {nodo.zona}
+                      </small>
+                    </td>
+                    <td>
+                      <span className="badge bg-body-secondary text-body border">
                         {nodo.tecnologia}
                       </span>
                     </td>

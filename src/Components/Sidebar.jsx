@@ -10,12 +10,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
   return (
     <aside
-      className={`app-sidebar ${sidebarOpen ? "show" : "hidden"}`}
+      className={`app-sidebar bg-body-tertiary border-end text-body ${sidebarOpen ? "show" : "hidden"}`}
       aria-label="Menú lateral de navegación"
     >
-      {/* Encabezado: 60px exactos alineado con el Topbar */}
       <div
-        className="d-flex align-items-center justify-content-between px-3 border-bottom bg-white"
+        className="d-flex align-items-center justify-content-between px-3 border-bottom bg-body-tertiary"
         style={{ height: "60px" }}
       >
         <div className="d-flex align-items-center gap-2">
@@ -27,13 +26,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           </div>
           <div className="lh-sm">
             <span
-              className="fw-bold text-dark d-block"
+              className="fw-bold text-body d-block"
               style={{ fontSize: "0.88rem" }}
             >
               ISP<span className="text-primary">MANAGER</span>
             </span>
             <span
-              className="text-secondary d-block"
+              className="text-body-secondary d-block"
               style={{ fontSize: "0.62rem" }}
             >
               Operations NOC
@@ -43,7 +42,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
         <button
           type="button"
-          className="btn btn-sm btn-light border-0 text-secondary p-1 d-flex align-items-center justify-content-center"
+          className="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center"
           onClick={() => setSidebarOpen(false)}
           title="Ocultar menú lateral"
           aria-label="Ocultar menú"
@@ -56,22 +55,37 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         className="flex-grow-1 overflow-y-auto py-2"
         aria-label="Rutas operativas"
       >
-        <div className="sidebar-category">OPERACIONES NOC</div>
+        <div
+          className="sidebar-category px-3 py-2 text-body-secondary fw-bold small"
+          style={{ fontSize: "0.68rem", letterSpacing: "0.05em" }}
+        >
+          OPERACIONES NOC
+        </div>
+
         <NavLink
           to="/"
           end
           className={({ isActive }) =>
-            `sidebar-btn ${isActive ? "active" : ""}`
+            `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
+              isActive
+                ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
+                : "text-body-secondary"
+            }`
           }
           onClick={handleNavClick}
         >
           <i className="bi bi-grid-fill"></i>
           <span>Panel Principal</span>
         </NavLink>
+
         <NavLink
           to="/clientes"
           className={({ isActive }) =>
-            `sidebar-btn ${isActive ? "active" : ""}`
+            `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
+              isActive
+                ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
+                : "text-body-secondary"
+            }`
           }
           onClick={handleNavClick}
         >
@@ -79,21 +93,36 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
           <span>Nómina Abonados</span>
         </NavLink>
 
-        <div className="sidebar-category">GESTIÓN COMERCIAL</div>
+        <div
+          className="sidebar-category px-3 py-2 mt-2 text-body-secondary fw-bold small"
+          style={{ fontSize: "0.68rem", letterSpacing: "0.05em" }}
+        >
+          GESTIÓN COMERCIAL
+        </div>
+
         <NavLink
           to="/planes"
           className={({ isActive }) =>
-            `sidebar-btn ${isActive ? "active" : ""}`
+            `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
+              isActive
+                ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
+                : "text-body-secondary"
+            }`
           }
           onClick={handleNavClick}
         >
           <i className="bi bi-hdd-stack-fill"></i>
           <span>Planes & Enlaces</span>
         </NavLink>
+
         <NavLink
           to="/soporte"
           className={({ isActive }) =>
-            `sidebar-btn ${isActive ? "active" : ""}`
+            `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
+              isActive
+                ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
+                : "text-body-secondary"
+            }`
           }
           onClick={handleNavClick}
         >
@@ -102,18 +131,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         </NavLink>
       </nav>
 
-      {/* Estado del OLT con indicador parpadeante */}
-      <div className="p-3 border-top mt-auto bg-light bg-opacity-50">
+      <div className="p-3 border-top mt-auto bg-body-secondary">
         <div className="d-flex align-items-center gap-2">
-          <span className="live-indicator"></span>
+          <span className="badge bg-success p-1 rounded-circle"></span>
           <div className="small lh-sm">
             <span
-              className="fw-semibold d-block text-dark"
+              className="fw-semibold d-block text-body"
               style={{ fontSize: "0.75rem" }}
             >
               OLT Principal Online
             </span>
-            <span className="text-secondary" style={{ fontSize: "0.68rem" }}>
+            <span
+              className="text-body-secondary"
+              style={{ fontSize: "0.68rem" }}
+            >
               Latencia: 8 ms
             </span>
           </div>
