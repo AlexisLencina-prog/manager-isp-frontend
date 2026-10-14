@@ -67,31 +67,12 @@ const HISTORIAL_BASE = [
   { hora: "18:00", downstream: 4.4, upstream: 2.4 },
 ];
 
-const TooltipGrafana = ({ active, payload, label, unidad = "Gbps" }) => {
-  if (!active || !payload || !payload.length) return null;
-  return (
-    <div
-      className="p-2 rounded-1 border shadow-sm font-monospace small"
-      style={{
-        backgroundColor: "rgba(15, 23, 42, 0.96)",
-        borderColor: "#334155",
-        color: "#f8fafc",
-        fontSize: "0.75rem",
-      }}
-    >
-      <div className="fw-bold border-bottom border-secondary pb-1 mb-1">
-        Lectura: {label}
-      </div>
-      {payload.map((item, idx) => (
-        <div key={idx} className="d-flex justify-content-between gap-3">
-          <span style={{ color: item.color || "#38bdf8" }}>● {item.name}:</span>
-          <strong>
-            {item.value} {unidad}
-          </strong>
-        </div>
-      ))}
-    </div>
-  );
+const ESTILO_TOOLTIP = {
+  backgroundColor: "rgba(15, 23, 42, 0.96)",
+  borderColor: "#334155",
+  color: "#f8fafc",
+  borderRadius: "4px",
+  fontSize: "12px",
 };
 
 const DashboardPage = ({ trafico = 3.8, setTrafico }) => {
@@ -134,20 +115,11 @@ const DashboardPage = ({ trafico = 3.8, setTrafico }) => {
 
   const handleProbarNodo = (nodo) => {
     Swal.fire({
-      title: `Probando respuesta: ${nodo.nombre}`,
-      html: "Enviando paquetes ICMP y verificando nivel óptico...",
-      timer: 800,
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    }).then(() => {
-      Swal.fire({
-        title: `Diagnóstico: ${nodo.nombre}`,
-        html: `Respuesta recibida correctamente.<br><b>Latencia actual:</b> ${nodo.latencia} ms<br><b>Señal óptica:</b> ${nodo.potenciaOptica}`,
-        icon: "info",
-        confirmButtonColor: "#0d6efd",
-      });
+      icon: "info",
+      title: `Diagnóstico: ${nodo.nombre}`,
+      html: `Respuesta ICMP recibida correctamente.<br><b>Latencia actual:</b> ${nodo.latencia} ms<br><b>Señal óptica:</b> ${nodo.potenciaOptica}`,
+      confirmButtonText: "Aceptar",
+      confirmButtonColor: "#0d6efd",
     });
   };
 
@@ -258,11 +230,9 @@ const DashboardPage = ({ trafico = 3.8, setTrafico }) => {
                     unit=" G"
                   />
                   <Tooltip
-                    cursor={{
-                      stroke: "rgba(148, 163, 184, 0.3)",
-                      strokeWidth: 1,
-                    }}
-                    content={<TooltipGrafana unidad="Gbps" />}
+                    contentStyle={ESTILO_TOOLTIP}
+                    itemStyle={{ color: "#f8fafc" }}
+                    formatter={(val) => `${val} Gbps`}
                   />
                   <ReferenceLine
                     y={4.5}
@@ -444,8 +414,9 @@ const DashboardPage = ({ trafico = 3.8, setTrafico }) => {
                     unit="ms"
                   />
                   <Tooltip
-                    cursor={{ fill: "rgba(148, 163, 184, 0.1)" }}
-                    content={<TooltipGrafana unidad="ms" />}
+                    contentStyle={ESTILO_TOOLTIP}
+                    itemStyle={{ color: "#f8fafc" }}
+                    formatter={(val) => `${val} ms`}
                   />
                   <ReferenceLine
                     y={20}

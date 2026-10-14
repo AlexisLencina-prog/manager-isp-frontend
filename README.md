@@ -42,7 +42,7 @@ Para optimizar la indexación en motores de búsqueda (SEO) y cumplir con los es
 
 - Petición HTTP `GET` mediante `axios.get()` en `src/Pages/ClientesPage.jsx` controlada al montar el componente con `useEffect`.
 - Manejo de estados con `useState` para la nómina (`clientes`), indicador de espera (`cargando`) y control de fallos (`errorCarga`).
-- Sincronización con el buscador global de la barra superior mediante parámetros de URL (`useSearchParams`).
+- Filtrado reactivo en tiempo real por titular, DNI, IP y estado de servicio.
 
 ### 2. Gestión de Variables de Entorno (`.env`)
 

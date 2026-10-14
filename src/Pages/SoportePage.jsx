@@ -124,38 +124,28 @@ const SoportePage = () => {
   }, [abiertos]);
 
   const handleDiagnosticarTicket = (ticket) => {
-    Swal.fire({
-      title: `Analizando enlace: ${ticket.id}`,
-      html: "Ejecutando telemetría remota sobre ONT y lectura óptica...",
-      timer: 950,
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    }).then(() => {
-      const potenciaSimulada =
-        ticket.categoria === "Fibra Óptica"
-          ? "-27.8 dBm (Alerta)"
-          : "-19.2 dBm (Normal)";
-      const distanciaCorte =
-        ticket.categoria === "Fibra Óptica"
-          ? "Corte detectado a 340 metros de caja NAP-04"
-          : "Continuidad óptica sin cortes físicos";
+    const potenciaSimulada =
+      ticket.categoria === "Fibra Óptica"
+        ? "-27.8 dBm (Alerta)"
+        : "-19.2 dBm (Normal)";
+    const distanciaCorte =
+      ticket.categoria === "Fibra Óptica"
+        ? "Corte detectado a 340 metros de caja NAP-04"
+        : "Continuidad óptica sin cortes físicos";
 
-      Swal.fire({
-        icon: ticket.prioridad === "Crítica" ? "warning" : "info",
-        title: `Diagnóstico Remoto: ${ticket.id}`,
-        html: `
-          <div class="small font-monospace text-start">
-            <div><b>Abonado:</b> ${ticket.abonado}</div>
-            <div><b>Categoría:</b> ${ticket.categoria}</div>
-            <div><b>Potencia RX ONT:</b> ${potenciaSimulada}</div>
-            <div><b>Resultado OTDR:</b> ${distanciaCorte}</div>
-          </div>
-        `,
-        confirmButtonText: "Entendido",
-        confirmButtonColor: "#0d6efd",
-      });
+    Swal.fire({
+      icon: ticket.prioridad === "Crítica" ? "warning" : "info",
+      title: `Diagnóstico Remoto: ${ticket.id}`,
+      html: `
+        <div class="small font-monospace text-start">
+          <div><b>Abonado:</b> ${ticket.abonado}</div>
+          <div><b>Categoría:</b> ${ticket.categoria}</div>
+          <div><b>Potencia RX ONT:</b> ${potenciaSimulada}</div>
+          <div><b>Resultado OTDR:</b> ${distanciaCorte}</div>
+        </div>
+      `,
+      confirmButtonText: "Entendido",
+      confirmButtonColor: "#0d6efd",
     });
   };
 

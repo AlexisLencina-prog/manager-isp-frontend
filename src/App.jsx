@@ -25,15 +25,12 @@ function App() {
     );
     setTrafico(nuevoTrafico);
 
-    Swal.mixin({
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false,
-      timer: 1800,
-      timerProgressBar: true,
-    }).fire({
+    Swal.fire({
       icon: "info",
-      title: `Muestra actualizada: ${nuevoTrafico} Gbps`,
+      title: "Muestra de tráfico actualizada",
+      text: `Lectura actual del troncal: ${nuevoTrafico} Gbps`,
+      timer: 1600,
+      showConfirmButton: false,
     });
   };
 
