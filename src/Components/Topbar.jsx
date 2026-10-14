@@ -1,7 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen, tema, setTema }) => {
+const Topbar = ({
+  onActualizarTrafico,
+  setSidebarOpen,
+  sidebarOpen,
+  tema,
+  setTema,
+}) => {
   const toggleTema = () => {
     setTema((prev) => (prev === "light" ? "dark" : "light"));
   };
@@ -14,7 +20,7 @@ const Topbar = ({ onActualizarTrafico, setSidebarOpen, sidebarOpen, tema, setTem
       <div className="d-flex align-items-center gap-2">
         <button
           type="button"
-          className="btn btn-sm btn-outline-secondary d-lg-none d-flex align-items-center justify-content-center p-2"
+          className="btn btn-sm btn-outline-secondary d-flex align-items-center justify-content-center p-2"
           onClick={() => setSidebarOpen((prev) => !prev)}
           title="Alternar menú"
           aria-label="Alternar menú"
