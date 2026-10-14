@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { Modal, Button } from "react-bootstrap";
@@ -50,12 +49,10 @@ const formatearUsuarios = (datos) =>
   }));
 
 const ClientesPage = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const busqueda = searchParams.get("q") || "";
-
   const [clientes, setClientes] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
   const [filtroEstado, setFiltroEstado] = useState("Todos");
 
   const [nombre, setNombre] = useState("");
@@ -110,14 +107,6 @@ const ClientesPage = () => {
     }
   };
 
-  const handleBusquedaChange = (valor) => {
-    if (valor) {
-      setSearchParams({ q: valor }, { replace: true });
-    } else {
-      setSearchParams({}, { replace: true });
-    }
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -141,13 +130,8 @@ const ClientesPage = () => {
       return;
     }
 
-    const maxIdActual = clientes.reduce((max, c) => {
-      const numero = parseInt(c.id.replace(/\D/g, ""), 10);
-      return !Number.isNaN(numero) && numero > max ? numero : max;
-    }, 1000);
-
     const nuevoCliente = {
-      id: `#${maxIdActual + 1}`,
+      id: `#${1000 + clientes.length + 1}`,
       nombre: nombre.trim(),
       dni: dni.trim(),
       email: `${nombre.trim().toLowerCase().replace(/\s+/g, ".")}@clientes.isp.net`,
@@ -568,7 +552,7 @@ const ClientesPage = () => {
                 placeholder="Filtrar por nombre, DNI o IP..."
                 aria-label="Filtrar por nombre, DNI o IP"
                 value={busqueda}
-                onChange={(e) => handleBusquedaChange(e.target.value)}
+                onChange={(e) => setBusqueda(e.target.value)}
               />
             </div>
           </div>

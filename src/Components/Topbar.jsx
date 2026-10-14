@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Topbar = ({
   onActualizarTrafico,
@@ -8,21 +7,8 @@ const Topbar = ({
   tema,
   setTema,
 }) => {
-  const [terminoBusqueda, setTerminoBusqueda] = useState("");
-  const navigate = useNavigate();
-
   const toggleTema = () => {
     setTema((prev) => (prev === "light" ? "dark" : "light"));
-  };
-
-  const handleBuscarSubmit = (e) => {
-    e.preventDefault();
-    const limpio = terminoBusqueda.trim();
-    if (limpio) {
-      navigate(`/clientes?q=${encodeURIComponent(limpio)}`);
-    } else {
-      navigate("/clientes");
-    }
   };
 
   const esOscuro = tema === "dark";
@@ -45,40 +31,13 @@ const Topbar = ({
           </button>
         )}
 
-        <form
-          onSubmit={handleBuscarSubmit}
-          className="d-none d-md-flex"
-          role="search"
+        <Link
+          to="/clientes"
+          className="btn btn-sm btn-outline-secondary d-none d-md-inline-flex align-items-center gap-2 font-monospace"
         >
-          <div
-            className="input-group input-group-sm"
-            style={{ width: "285px" }}
-          >
-            <span className="input-group-text bg-body-secondary border-end-0 text-body-secondary">
-              <i className="bi bi-search"></i>
-            </span>
-            <input
-              type="search"
-              className="form-control bg-body-secondary border-start-0 border-end-0 text-body"
-              placeholder="Buscar cliente, DNI o IP..."
-              aria-label="Buscar cliente, DNI o IP"
-              value={terminoBusqueda}
-              onChange={(e) => setTerminoBusqueda(e.target.value)}
-            />
-            <span className="input-group-text bg-body-secondary border-start-0">
-              <kbd
-                className={`font-monospace ${
-                  terminoBusqueda.trim()
-                    ? "bg-primary text-white"
-                    : "bg-body text-body-secondary border"
-                }`}
-                style={{ fontSize: "0.65rem", padding: "1px 5px" }}
-              >
-                Enter ↵
-              </kbd>
-            </span>
-          </div>
-        </form>
+          <i className="bi bi-people"></i>
+          <span>Padrón de Abonados</span>
+        </Link>
       </div>
 
       <div className="d-none d-xl-flex align-items-center gap-3 small font-monospace text-body-secondary">
