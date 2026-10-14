@@ -1,4 +1,3 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
@@ -8,146 +7,117 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     }
   };
 
+  const navClass = ({ isActive }) =>
+    `d-flex align-items-center justify-content-between px-3 py-2 mx-2 my-1 rounded-1 text-decoration-none small ${
+      isActive
+        ? "bg-primary bg-opacity-10 text-primary fw-bold border-start border-3 border-primary"
+        : "text-body-secondary"
+    }`;
+
   return (
     <aside
-      className={`app-sidebar bg-body-tertiary border-end text-body ${sidebarOpen ? "show" : "hidden"}`}
+      className={`app-sidebar bg-body border-end d-flex flex-column ${
+        sidebarOpen ? "show" : "hidden"
+      }`}
       aria-label="Menú lateral de navegación"
     >
       <div
-        className="d-flex align-items-center justify-content-between px-3 border-bottom bg-body-tertiary"
-        style={{ height: "60px" }}
+        className="d-flex align-items-center justify-content-between px-3 border-bottom"
+        style={{ height: "54px" }}
       >
         <div className="d-flex align-items-center gap-2">
-          <div
-            className="bg-primary text-white rounded-3 d-flex align-items-center justify-content-center shadow-sm"
-            style={{ width: "32px", height: "32px" }}
-          >
-            <i className="bi bi-broadcast fs-5"></i>
-          </div>
-          <div className="lh-sm">
+          <span className="pulse-dot"></span>
+          <div className="lh-1">
             <span
               className="fw-bold text-body d-block"
-              style={{ fontSize: "0.88rem" }}
+              style={{ fontSize: "0.9rem" }}
             >
-              ISP<span className="text-primary">MANAGER</span>
+              ISP MANAGER
             </span>
             <span
-              className="text-body-secondary d-block"
-              style={{ fontSize: "0.62rem" }}
+              className="text-body-secondary font-monospace"
+              style={{ fontSize: "0.65rem" }}
             >
-              Operations NOC
+              PANEL CENTRAL DE RED
             </span>
           </div>
         </div>
 
         <button
           type="button"
-          className="btn btn-sm btn-outline-secondary border-0 p-1 d-flex align-items-center justify-content-center"
+          className="btn btn-sm btn-outline-secondary border-0 py-0 px-2"
           onClick={() => setSidebarOpen(false)}
           title="Ocultar menú lateral"
-          aria-label="Ocultar menú"
+          aria-label="Ocultar menú lateral"
         >
-          <i className="bi bi-layout-sidebar-inset fs-5"></i>
+          <i className="bi bi-chevron-left"></i>
         </button>
       </div>
 
       <nav
         className="flex-grow-1 overflow-y-auto py-2"
-        aria-label="Rutas operativas"
+        aria-label="Módulos del sistema"
       >
         <div
-          className="sidebar-category px-3 py-2 text-body-secondary fw-bold small"
-          style={{ fontSize: "0.68rem", letterSpacing: "0.05em" }}
+          className="px-3 pt-2 pb-1 text-uppercase text-body-secondary fw-bold"
+          style={{ fontSize: "0.68rem" }}
         >
-          OPERACIONES NOC
+          Operación y Monitoreo
         </div>
 
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) =>
-            `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
-              isActive
-                ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
-                : "text-body-secondary"
-            }`
-          }
-          onClick={handleNavClick}
-        >
-          <i className="bi bi-grid-fill"></i>
-          <span>Panel Principal</span>
+        <NavLink to="/" end className={navClass} onClick={handleNavClick}>
+          <span className="d-flex align-items-center gap-2">
+            <i className="bi bi-speedometer2"></i>
+            <span>Monitor de Red</span>
+          </span>
+          <span className="badge bg-success-subtle text-success font-monospace">
+            VIVO
+          </span>
         </NavLink>
 
-        <NavLink
-          to="/clientes"
-          className={({ isActive }) =>
-            `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
-              isActive
-                ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
-                : "text-body-secondary"
-            }`
-          }
-          onClick={handleNavClick}
-        >
-          <i className="bi bi-people-fill"></i>
-          <span>Nómina Abonados</span>
+        <NavLink to="/clientes" className={navClass} onClick={handleNavClick}>
+          <span className="d-flex align-items-center gap-2">
+            <i className="bi bi-people"></i>
+            <span>Padrón de Clientes</span>
+          </span>
+          <span className="badge bg-body-secondary text-body-secondary font-monospace">
+            1.4k
+          </span>
         </NavLink>
 
         <div
-          className="sidebar-category px-3 py-2 mt-2 text-body-secondary fw-bold small"
-          style={{ fontSize: "0.68rem", letterSpacing: "0.05em" }}
+          className="px-3 pt-3 pb-1 text-uppercase text-body-secondary fw-bold"
+          style={{ fontSize: "0.68rem" }}
         >
-          GESTIÓN COMERCIAL
+          Configuración y Soporte
         </div>
 
-        <NavLink
-          to="/planes"
-          className={({ isActive }) =>
-            `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
-              isActive
-                ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
-                : "text-body-secondary"
-            }`
-          }
-          onClick={handleNavClick}
-        >
-          <i className="bi bi-hdd-stack-fill"></i>
-          <span>Planes & Enlaces</span>
+        <NavLink to="/planes" className={navClass} onClick={handleNavClick}>
+          <span className="d-flex align-items-center gap-2">
+            <i className="bi bi-sliders"></i>
+            <span>Planes y Velocidades</span>
+          </span>
         </NavLink>
 
-        <NavLink
-          to="/soporte"
-          className={({ isActive }) =>
-            `sidebar-btn d-flex align-items-center gap-2 px-3 py-2 text-decoration-none transition-all ${
-              isActive
-                ? "active bg-primary-subtle text-primary fw-bold border-start border-3 border-primary"
-                : "text-body-secondary"
-            }`
-          }
-          onClick={handleNavClick}
-        >
-          <i className="bi bi-headset"></i>
-          <span>Mesa de Tickets</span>
+        <NavLink to="/soporte" className={navClass} onClick={handleNavClick}>
+          <span className="d-flex align-items-center gap-2">
+            <i className="bi bi-wrench-adjustable"></i>
+            <span>Mesa de Reclamos</span>
+          </span>
+          <span className="badge text-bg-warning font-monospace">03</span>
         </NavLink>
       </nav>
 
-      <div className="p-3 border-top mt-auto bg-body-secondary">
-        <div className="d-flex align-items-center gap-2">
-          <span className="badge bg-success p-1 rounded-circle"></span>
-          <div className="small lh-sm">
-            <span
-              className="fw-semibold d-block text-body"
-              style={{ fontSize: "0.75rem" }}
-            >
-              OLT Principal Online
-            </span>
-            <span
-              className="text-body-secondary"
-              style={{ fontSize: "0.68rem" }}
-            >
-              Latencia: 8 ms
-            </span>
-          </div>
+      <div className="px-3 py-2 border-top mt-auto bg-body-tertiary small">
+        <div className="d-flex justify-content-between align-items-center mb-1">
+          <span className="text-body-secondary">Enlace Principal</span>
+          <span className="badge bg-success-subtle text-success border border-success-subtle font-monospace">
+            CONECTADO
+          </span>
+        </div>
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="text-body-secondary">Nodos Activos</span>
+          <span className="font-monospace fw-semibold text-body">2 de 3</span>
         </div>
       </div>
     </aside>
