@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 import Sidebar from "./Components/Sidebar";
 import Topbar from "./Components/Topbar";
 import AppRouter from "./Components/AppRouter";
@@ -6,11 +7,11 @@ import AppRouter from "./Components/AppRouter";
 function App() {
   const [trafico, setTrafico] = useState(3.8);
   const [sidebarOpen, setSidebarOpen] = useState(
-    () => window.innerWidth >= 992
+    () => window.innerWidth >= 992,
   );
 
   const [tema, setTema] = useState(() => {
-    return localStorage.getItem("tema_app") || "light";
+    return localStorage.getItem("tema_app") || "dark";
   });
 
   useEffect(() => {
@@ -19,12 +20,25 @@ function App() {
   }, [tema]);
 
   const handleActualizarTrafico = () => {
-    const nuevoTrafico = (Math.random() * (4.8 - 2.5) + 2.5).toFixed(1);
+    const nuevoTrafico = parseFloat(
+      (Math.random() * (4.8 - 2.5) + 2.5).toFixed(1),
+    );
     setTrafico(nuevoTrafico);
+
+    Swal.mixin({
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 1800,
+      timerProgressBar: true,
+    }).fire({
+      icon: "info",
+      title: `Muestra actualizada: ${nuevoTrafico} Gbps`,
+    });
   };
 
   return (
-    <div className="d-flex position-relative bg-body text-body min-vh-100">
+    <div className="d-flex position-relative min-vh-100 bg-body-secondary text-body">
       {sidebarOpen && (
         <div
           className="sidebar-backdrop d-lg-none"
@@ -35,7 +49,9 @@ function App() {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <div
-        className={`app-wrapper flex-grow-1 d-flex flex-column ${!sidebarOpen ? "full-width" : ""}`}
+        className={`app-wrapper flex-grow-1 d-flex flex-column ${
+          !sidebarOpen ? "full-width" : ""
+        }`}
       >
         <Topbar
           onActualizarTrafico={handleActualizarTrafico}
@@ -45,13 +61,24 @@ function App() {
           setTema={setTema}
         />
 
-        <main className="p-3 p-lg-4 flex-grow-1 bg-body text-body">
-          <AppRouter trafico={trafico} />
+        <main className="p-3 flex-grow-1">
+          <AppRouter trafico={trafico} setTrafico={setTrafico} />
         </main>
 
-        <footer className="py-3 px-4 border-top bg-body-tertiary text-body-secondary small d-flex justify-content-between align-items-center">
-          <span>&copy; 2026 ISP MANAGER Platform</span>
-          <span>Grupo 16 - Cátedra Programación 4</span>
+        <footer className="py-2 px-3 border-top bg-body text-body-secondary small d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div className="d-flex align-items-center gap-2">
+            <span className="pulse-dot" aria-hidden="true"></span>
+            <strong className="text-body font-monospace">
+              ISP MANAGER v2.4
+            </strong>
+            <span className="d-none d-sm-inline">
+              | Sistema de Gestión NOC y Telecomunicaciones
+            </span>
+          </div>
+          <div className="font-monospace" style={{ fontSize: "0.78rem" }}>
+            Grupo 16 (Alexis Lencina - Eduardo Albarracín) | Programación 4
+            (UTN-FRT) &copy; 2026
+          </div>
         </footer>
       </div>
     </div>

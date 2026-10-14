@@ -1,40 +1,45 @@
-import React from "react";
-
 const KpiCard = ({
   titulo,
-  valor,
-  badgeTexto,
-  badgeClase,
-  icono,
-  colorIcono,
-  subtitulo = "Operación normal",
+  valorActual,
+  capacidadTotal,
+  porcentaje,
+  colorBarra = "bg-primary",
+  detalle,
+  isLast = false,
 }) => {
   return (
-    <div className="col-12 col-sm-6 col-xl-3">
-      <div className="card border-0 rounded-3 p-3 bg-body-tertiary text-body shadow-sm h-100">
-        <div className="d-flex justify-content-between align-items-center mb-2">
-          <span className="text-body-secondary small fw-semibold">
-            {titulo}
-          </span>
-          <div
-            className={`rounded-2 p-2 d-flex align-items-center justify-content-center ${colorIcono}`}
-            style={{ width: "32px", height: "32px" }}
-          >
-            <i className={`bi ${icono} fs-6`}></i>
-          </div>
-        </div>
+    <div className={`py-2 ${!isLast ? "border-bottom" : ""}`}>
+      <div className="d-flex justify-content-between align-items-baseline mb-1">
+        <span className="fw-semibold text-body small">{titulo}</span>
+        <span className="font-monospace small">
+          <strong className="text-body">{valorActual}</strong>
+          {capacidadTotal && (
+            <span className="text-body-secondary"> / {capacidadTotal}</span>
+          )}
+        </span>
+      </div>
 
-        <div className="d-flex justify-content-between align-items-baseline my-1">
-          <h2 className="h4 fw-bold mb-0 text-body">{valor}</h2>
-          <span className={`badge ${badgeClase} small px-2 py-1`}>
-            {badgeTexto}
-          </span>
-        </div>
+      <div
+        className="progress my-1"
+        style={{ height: "8px" }}
+        role="progressbar"
+        aria-label={titulo}
+        aria-valuenow={porcentaje}
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        <div
+          className={`progress-bar progress-bar-striped ${colorBarra}`}
+          style={{ width: `${porcentaje}%` }}
+        ></div>
+      </div>
 
-        <div className="text-body-secondary mt-2" style={{ fontSize: "0.72rem" }}>
-          <i className="bi bi-check2-circle text-success me-1"></i>
-          {subtitulo}
-        </div>
+      <div
+        className="d-flex justify-content-between align-items-center text-body-secondary"
+        style={{ fontSize: "0.73rem" }}
+      >
+        <span>{detalle}</span>
+        <span className="font-monospace fw-bold text-body">{porcentaje}%</span>
       </div>
     </div>
   );
